@@ -101,12 +101,31 @@ void serve_routes(int client)
             {
                 if (strcmp(routes[i].path, path) == 0)
                 {
-                    if (strcmp(routes[i].method, "GET") == 0)
+                    const char *requested_method = strtok(buffer, " ");
+                    if (strcmp(routes[i].method, requested_method) != 0)
                     {
-                        send(client, ok_200, strlen(ok_200), 0);
-                        send(client, routes[i].cached_file, strlen(routes[i].cached_file), 0);
-                        return;
+                        continue; 
                     }
+
+                    char response[2048] = {0};
+
+                    strncpy(response, ok_200, strlen(ok_200));
+
+                    char *file_content = routes[i].cached_file;
+
+                    if (routes[i].replacements != NULL)
+                    {
+                        file_content = replace_variables(file_content, routes[i].replacements, routes[i].replacements_count);
+                    }
+
+                    strcat(response, file_content);
+                    free(file_content);
+
+                    // debug print
+                    printf("%s\n", response);
+
+                    send(client, response, strlen(response), 0);
+                    return;
                 }
             }
 

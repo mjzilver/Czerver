@@ -3,6 +3,7 @@
 #include <pthread.h>
 #include "server.h"
 #include "route.h"
+#include <string.h>
 
 int main(int argc, char const *argv[])
 {
@@ -13,9 +14,16 @@ int main(int argc, char const *argv[])
     }
 
     // Register routes
-    register_route("GET", "/", "./html/index.html");
-    register_route("GET", "/about", "./html/about.html");
-    register_route("GET", "/contact", "./html/contact.html");
+    register_route("GET", "/", "./html/index.html", NULL, 0);
+    register_route("GET", "/about", "./html/about.html", NULL, 0);
+    register_route("GET", "/contact", "./html/contact.html", NULL, 0);
+
+    KeyValuePair replacements[] = {
+        {"item_one", "First item"},
+        {"item_two", "Second item"},
+        {"item_three", "Third item"},
+    };
+    register_route("GET", "/list", "./html/list.html", replacements, 3);
 
     pthread_t thread_id;
     int success_flag = 0;

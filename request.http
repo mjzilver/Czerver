@@ -1,0 +1,18 @@
+### Define Port Variable
+@port = 8080
+
+### Home Page
+GET http://localhost:{{port}}/
+Accept: text/html
+
+### Contact Page
+GET http://localhost:{{port}}/contact
+Accept: text/html
+
+### List Page
+GET http://localhost:{{port}}/list
+Accept: text/html
+
+### About Page
+GET http://localhost:{{port}}/about
+Accept: text/html

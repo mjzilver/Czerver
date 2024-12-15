@@ -9,13 +9,15 @@
 Route routes[MAX_ROUTES];
 int routes_count = 0;
 
-void register_route(const char *method, const char *path, const char *file_path)
+void register_route(const char *method, const char *path, const char *file_path, KeyValuePair* replacements, int replacements_count)
 {
     Route route;
     strcpy(route.method, method);
     strcpy(route.path, path);
     strcpy(route.file_path, file_path);
     route.cached_file = get_file_content(file_path);
+    route.replacements = replacements;
+    route.replacements_count = replacements_count;
     if (route.cached_file == NULL)
     {
         perror("Failed to load file content");
