@@ -104,7 +104,7 @@ void serve_routes(int client)
                     const char *requested_method = strtok(buffer, " ");
                     if (strcmp(routes[i].method, requested_method) != 0)
                     {
-                        continue; 
+                        continue;
                     }
 
                     char response[2048] = {0};
@@ -133,4 +133,3 @@ void serve_routes(int client)
         }
     }
 }
-

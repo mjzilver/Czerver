@@ -4,20 +4,25 @@
 #include <ctype.h>
 #include "utils.h"
 
-void trim_whitespace(char* str) {
-    if (str == NULL) return;
+void trim_whitespace(char *str)
+{
+    if (str == NULL)
+        return;
 
-    char* start = str;
-    while (isspace((unsigned char)*start)) {
+    char *start = str;
+    while (isspace((unsigned char)*start))
+    {
         start++;
     }
 
-    if (start != str) {
+    if (start != str)
+    {
         memmove(str, start, strlen(start) + 1);
     }
 
-    char* end = str + strlen(str) - 1;
-    while (end > str && isspace((unsigned char)*end)) {
+    char *end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end))
+    {
         end--;
     }
 

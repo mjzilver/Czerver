@@ -8,8 +8,10 @@
 const char *delim_start = "{{";
 const char *delim_end = "}}";
 
-void resize_if_needed(char** final_content, size_t* final_length, size_t needed_length) {
-    if (*final_length < needed_length) {
+void resize_if_needed(char **final_content, size_t *final_length, size_t needed_length)
+{
+    if (*final_length < needed_length)
+    {
         *final_length = needed_length * 2;
         *final_content = realloc(*final_content, *final_length);
         assert(*final_content != NULL);
@@ -40,7 +42,8 @@ char *replace_variables(const char *html_content, KeyValuePair replacements[], s
 
         // Find the end delimiter
         const char *end_pos = strstr(current_pos, delim_end);
-        if (end_pos == NULL) {
+        if (end_pos == NULL)
+        {
             break;
         }
 
@@ -53,8 +56,10 @@ char *replace_variables(const char *html_content, KeyValuePair replacements[], s
 
         // Find the value corresponding to the key
         const char *value = NULL;
-        for (size_t i = 0; i < count; i++) {
-            if (strcmp(key, replacements[i].key) == 0) {
+        for (size_t i = 0; i < count; i++)
+        {
+            if (strcmp(key, replacements[i].key) == 0)
+            {
                 value = replacements[i].value;
                 break;
             }

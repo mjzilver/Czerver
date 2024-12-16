@@ -15,7 +15,7 @@ typedef struct
 
 #define MAX_ROUTES 100
 extern Route routes[MAX_ROUTES];
-extern int routes_count; 
+extern int routes_count;
 
 void register_route(const char *method, const char *path, const char *file_path, KeyValuePair *replacements, int replacements_count);
 int try_send_file(char *path, int client);

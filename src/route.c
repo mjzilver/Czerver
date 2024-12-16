@@ -9,7 +9,7 @@
 Route routes[MAX_ROUTES];
 int routes_count = 0;
 
-void register_route(const char *method, const char *path, const char *file_path, KeyValuePair* replacements, int replacements_count)
+void register_route(const char *method, const char *path, const char *file_path, KeyValuePair *replacements, int replacements_count)
 {
     Route route;
     strcpy(route.method, method);
@@ -50,7 +50,8 @@ void free_routes()
 void send_404(char *path, int client)
 {
     char *response = malloc(strlen(not_found_404) + strlen(path) + 1);
-    if (response == NULL) return;
+    if (response == NULL)
+        return;
 
     strcpy(response, not_found_404);
     strcat(response, path);
@@ -58,4 +59,3 @@ void send_404(char *path, int client)
     send(client, response, strlen(response), 0);
     free(response);
 }
-
