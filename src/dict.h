@@ -5,21 +5,18 @@
 #define INITIAL_DICT_CAPACITY 10
 #define RESIZE_BUCKET 15
 
-typedef struct
-{
+typedef struct {
     char *key;
     char *value;
 } Dict_item;
 
-typedef struct
-{
+typedef struct {
     Dict_item *items;
     int size;
     int capacity;
 } Dict_bucket;
 
-typedef struct
-{
+typedef struct {
     Dict_bucket *buckets;
     int size;
     int capacity;
@@ -37,4 +34,4 @@ void bucket_set(Dict_bucket *buck, const char *key, const char *value);
 char *bucket_get(Dict_bucket *buck, const char *key);
 void bucket_remove(Dict_bucket *buck, const char *key);
 
-#endif // HASHMAP_H
+#endif  // HASHMAP_H

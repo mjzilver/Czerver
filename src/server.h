@@ -1,8 +1,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-typedef struct
-{
+typedef struct {
     int port;
     int *success_flag;
 } ServerArgs;

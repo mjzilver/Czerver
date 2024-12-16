@@ -1,15 +1,15 @@
 #include "file.h"
-#include "http_codes.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
 
-char *read_file(const char *path)
-{
+#include "http_codes.h"
+
+char *read_file(const char *path) {
     FILE *file = fopen(path, "r");
-    if (file == NULL)
-    {
+    if (file == NULL) {
         return NULL;
     }
 
@@ -19,8 +19,7 @@ char *read_file(const char *path)
     rewind(file);
 
     char *content = malloc(file_size + 1);
-    if (content == NULL)
-    {
+    if (content == NULL) {
         fclose(file);
         return NULL;
     }
@@ -32,11 +31,9 @@ char *read_file(const char *path)
     return content;
 }
 
-int send_file(char *path, int client)
-{
+int send_file(char *path, int client) {
     FILE *file = fopen(path, "r");
-    if (file == NULL)
-    {
+    if (file == NULL) {
         return 0;
     }
 
@@ -46,8 +43,7 @@ int send_file(char *path, int client)
     rewind(file);
 
     char *response = malloc(strlen(ok_200) + file_size + 1);
-    if (response == NULL)
-    {
+    if (response == NULL) {
         fclose(file);
         return 0;
     }

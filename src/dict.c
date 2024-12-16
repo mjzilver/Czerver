@@ -1,11 +1,11 @@
 #include "dict.h"
+
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
-Dict *dict_new(int initial_capacity)
-{
+Dict *dict_new(int initial_capacity) {
     Dict *d = malloc(sizeof(Dict));
     assert(d != NULL);
 
@@ -14,8 +14,7 @@ Dict *dict_new(int initial_capacity)
     d->buckets = malloc(sizeof(Dict_bucket) * initial_capacity);
     assert(d->buckets != NULL);
 
-    for (int i = 0; i < initial_capacity; i++)
-    {
+    for (int i = 0; i < initial_capacity; i++) {
         d->buckets[i].size = 0;
         d->buckets[i].capacity = 2;
         d->buckets[i].items = malloc(sizeof(Dict_item) * 5);
@@ -24,12 +23,9 @@ Dict *dict_new(int initial_capacity)
     return d;
 }
 
-void dict_free(Dict *d)
-{
-    for (int i = 0; i < d->capacity; i++)
-    {
-        for (int j = 0; j < d->buckets[i].size; j++)
-        {
+void dict_free(Dict *d) {
+    for (int i = 0; i < d->capacity; i++) {
+        for (int j = 0; j < d->buckets[i].size; j++) {
             free(d->buckets[i].items[j].key);
             free(d->buckets[i].items[j].value);
         }
@@ -39,56 +35,48 @@ void dict_free(Dict *d)
     free(d);
 }
 
-unsigned int hash(const char *str)
-{
+unsigned int hash(const char *str) {
     unsigned int hash = 5381;
     int c;
 
-    while ((c = *str++))
-    {
+    while ((c = *str++)) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     }
 
     return hash;
 }
 
-int get_index(int hashed_key, int capacity)
-{
+int get_index(int hashed_key, int capacity) {
     return (hashed_key % capacity + capacity) % capacity;
 }
 
-void dict_set(Dict *d, const char *key, const char *value)
-{
+void dict_set(Dict *d, const char *key, const char *value) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
     bucket_set(&d->buckets[idx], key, value);
 }
 
-char *dict_get(Dict *d, const char *key)
-{
+char *dict_get(Dict *d, const char *key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
     return bucket_get(&d->buckets[idx], key);
 }
 
-void dict_remove(Dict *d, const char *key)
-{
+void dict_remove(Dict *d, const char *key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
     bucket_remove(&d->buckets[idx], key);
 }
 
-void bucket_set(Dict_bucket *b, const char *key, const char *value)
-{
+void bucket_set(Dict_bucket *b, const char *key, const char *value) {
     Dict_item di;
     di.key = strdup(key);
     di.value = strdup(value);
     assert(di.key != NULL && di.value != NULL);
 
-    if (b->size >= b->capacity)
-    {
+    if (b->size >= b->capacity) {
         printf("Resizing bucket...\n");
         b->capacity *= 2;
         b->items = realloc(b->items, sizeof(Dict_item) * b->capacity);
@@ -99,31 +87,24 @@ void bucket_set(Dict_bucket *b, const char *key, const char *value)
     b->size++;
 }
 
-char *bucket_get(Dict_bucket *b, const char *key)
-{
-    for (int i = 0; i < b->size; i++)
-    {
-        if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0)
-        {
+char *bucket_get(Dict_bucket *b, const char *key) {
+    for (int i = 0; i < b->size; i++) {
+        if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             return b->items[i].value;
         }
     }
     return NULL;
 }
 
-void bucket_remove(Dict_bucket *b, const char *key)
-{
-    for (int i = 0; i < b->size; i++)
-    {
-        if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0)
-        {
+void bucket_remove(Dict_bucket *b, const char *key) {
+    for (int i = 0; i < b->size; i++) {
+        if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             free(b->items[i].key);
             free(b->items[i].value);
 
-            // Shift the items 
-            for (int k = i + 1; k < b->size; k++)
-            {
-                b->items[k - 1] = b->items[k];  
+            // Shift the items
+            for (int k = i + 1; k < b->size; k++) {
+                b->items[k - 1] = b->items[k];
             }
 
             b->items[b->size - 1].key = NULL;
@@ -135,15 +116,13 @@ void bucket_remove(Dict_bucket *b, const char *key)
     }
 }
 
-void dict_print(Dict *d)
-{
+void dict_print(Dict *d) {
     printf("==== Dict Start ====\n");
-    for (int i = 0; i < d->capacity; i++)
-    {
-        printf("Bucket %d (size=%d): ", i, d->buckets[i].size); // Print bucket size
-        for (int j = 0; j < d->buckets[i].size; j++)
-        {
-            printf("(%s=%s) ", d->buckets[i].items[j].key, d->buckets[i].items[j].value);
+    for (int i = 0; i < d->capacity; i++) {
+        printf("Bucket %d (size=%d): ", i, d->buckets[i].size);  // Print bucket size
+        for (int j = 0; j < d->buckets[i].size; j++) {
+            printf("(%s=%s) ", d->buckets[i].items[j].key,
+                   d->buckets[i].items[j].value);
         }
         printf("\n");
     }

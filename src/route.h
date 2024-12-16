@@ -3,8 +3,7 @@
 
 #include "template.h"
 
-typedef struct
-{
+typedef struct {
     char method[8];
     char path[256];
     char file_path[256];

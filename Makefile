@@ -3,6 +3,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+HEAD_FILES = $(wildcard $(SRC_DIR)/*.h)
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and flags
@@ -10,7 +11,7 @@ CC = gcc
 CFLAGS = -Wall -g
 
 # Targets
-.PHONY: all build run valgrind clean
+.PHONY: all build run valgrind clean format
 
 all: build run
 
@@ -30,3 +31,7 @@ valgrind: build
 
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)
+
+format:
+	clang-format -i $(SRC_FILES) $(HEAD_FILES)
+

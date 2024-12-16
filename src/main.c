@@ -1,15 +1,14 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include "server.h"
-#include "route.h"
 #include <string.h>
 
-int main(int argc, char const *argv[])
-{
+#include "route.h"
+#include "server.h"
+
+int main(int argc, char const *argv[]) {
     int desired_port = 8080;
-    if (argc > 1)
-    {
+    if (argc > 1) {
         desired_port = atoi(argv[1]);
     }
 
@@ -29,8 +28,7 @@ int main(int argc, char const *argv[])
     int success_flag = 0;
     int max_retries = 5;
 
-    for (int i = 0; i <= max_retries; i++)
-    {
+    for (int i = 0; i <= max_retries; i++) {
         int port_to_try = desired_port + i;
 
         // Prepare arguments for the thread
@@ -43,15 +41,14 @@ int main(int argc, char const *argv[])
         // Wait for the thread to finish (server to stop)
         pthread_join(thread_id, NULL);
 
-        if (!success_flag)
-        {
-            printf("Failed to start server on port %d, trying next port...\n", port_to_try);
+        if (!success_flag) {
+            printf("Failed to start server on port %d, trying next port...\n",
+                   port_to_try);
         }
 
         free(args);
 
-        if (i == max_retries)
-        {
+        if (i == max_retries) {
             printf("All attempts failed. Server could not start.\n");
             free_routes();
             return 1;
