@@ -18,4 +18,5 @@ IndentCaseLabels: false
 SpaceBeforeParens: ControlStatements
 SpacesInConditionalStatement: false 
 KeepEmptyLinesAtTheStartOfBlocks: false 
-
+DerivePointerAlignment: false
+PointerAlignment: Left

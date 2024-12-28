@@ -20,9 +20,9 @@ typedef struct {
     char method[8];
     char path[256];
     char file_path[256];
-    char *cached_file;
+    char* cached_file;
     FileType type;
-    KeyValuePair *replacements;
+    KeyValuePair* replacements;
     size_t replacements_count;
 } Route;
 
@@ -30,10 +30,10 @@ typedef struct {
 extern Route routes[MAX_ROUTES];
 extern int routes_count;
 
-void register_route(const char *method, const char *path, const char *file_path, KeyValuePair *replacements, int replacements_count);
-char *get_file_content(const char *path);
+void register_route(const char* method, const char* path, const char* file_path, KeyValuePair* replacements, int replacements_count);
+char* get_file_content(const char* path);
 void free_routes();
-void send_404(char *path, int client);
+void send_404(char* path, int client);
 char* get_type_header(FileType type);
 
 #endif

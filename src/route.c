@@ -11,7 +11,7 @@
 Route routes[MAX_ROUTES];
 int routes_count = 0;
 
-void register_route(const char *method, const char *path, const char *file_path, KeyValuePair *replacements, int replacements_count) {
+void register_route(const char* method, const char* path, const char* file_path, KeyValuePair* replacements, int replacements_count) {
     Route route;
     strcpy(route.method, method);
     strcpy(route.path, path);
@@ -39,18 +39,18 @@ void register_route(const char *method, const char *path, const char *file_path,
 
 char* get_type_header(FileType type) {
     switch (type) {
-        case HTML_TYPE:
-            return "text/html";
-        case CSS_TYPE:
-            return "text/css";
-        case JS_TYPE:
-            return "application/javascript";
-        default:
-            return "text/plain";
+    case HTML_TYPE:
+        return "text/html";
+    case CSS_TYPE:
+        return "text/css";
+    case JS_TYPE:
+        return "application/javascript";
+    default:
+        return "text/plain";
     }
 }
 
-char *get_file_content(const char *path) {
+char* get_file_content(const char* path) {
     return read_file(path);
 }
 
@@ -62,8 +62,8 @@ void free_routes() {
     }
 }
 
-void send_404(char *path, int client) {
-    char *response = malloc(strlen(HTTP_404) + strlen(path) + 1);
+void send_404(char* path, int client) {
+    char* response = malloc(strlen(HTTP_404) + strlen(path) + 1);
     if (response == NULL)
         return;
 

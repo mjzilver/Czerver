@@ -12,17 +12,17 @@
 
 struct sockaddr_in addr;
 
-struct sockaddr_in *create_address(int port) {
+struct sockaddr_in* create_address(int port) {
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     return &addr;
 }
 
-void *start_server_wrapper(void *args) {
-    ServerArgs *server_args = (ServerArgs *)args;
+void* start_server_wrapper(void* args) {
+    ServerArgs* server_args = (ServerArgs*)args;
     int port = server_args->port;
-    int *success_flag = server_args->success_flag;
+    int* success_flag = server_args->success_flag;
 
     // Set success flag based on the server's return code
     *success_flag = (start_server(port) == 0);
@@ -43,9 +43,9 @@ int start_server(int port) {
         return 1;
     }
 
-    struct sockaddr_in *adrr = create_address(port);
+    struct sockaddr_in* adrr = create_address(port);
 
-    if (bind(sock, (struct sockaddr *)adrr, sizeof(*adrr)) < 0) {
+    if (bind(sock, (struct sockaddr*)adrr, sizeof(*adrr)) < 0) {
         perror("Failed to bind the socket");
         return 1;
     }
@@ -88,7 +88,7 @@ void serve_routes(int client) {
 
             for (int i = 0; i < routes_count; i++) {
                 if (strcmp(routes[i].path, path) == 0) {
-                    const char *requested_method = strtok(buffer, " ");
+                    const char* requested_method = strtok(buffer, " ");
                     if (strcmp(routes[i].method, requested_method) != 0) {
                         continue;
                     }
@@ -97,24 +97,24 @@ void serve_routes(int client) {
 
                     strcat(response, HTTP_200);
 
-                    char *type_header = get_type_header(routes[i].type);
+                    char* type_header = get_type_header(routes[i].type);
 
-                    char *file_content = process_template(routes[i].cached_file, routes[i].replacements);
+                    char* file_content = process_template(routes[i].cached_file, routes[i].replacements);
 
                     strcat(response, "Content-Type: ");
                     strcat(response, type_header);
                     strcat(response, "\n\n");
 
                     strcat(response, file_content);
-                    
-                    #ifdef DEBUG
+
+#ifdef DEBUG
                     printf("RESPONSE:\n%s\n", response);
-                    #endif
+#endif
 
                     send(client, response, strlen(response), 0);
 
                     free(file_content);
-                
+
                     return;
                 }
             }

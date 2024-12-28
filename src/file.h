@@ -3,6 +3,6 @@
 
 #include "route.h"
 
-char *read_file(const char *path);
+char* read_file(const char* path);
 
 #endif

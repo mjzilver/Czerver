@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-Dict *dict_new(int initial_capacity) {
-    Dict *d = malloc(sizeof(Dict));
+Dict* dict_new(int initial_capacity) {
+    Dict* d = malloc(sizeof(Dict));
     assert(d != NULL);
 
     d->size = 0;
@@ -23,7 +23,7 @@ Dict *dict_new(int initial_capacity) {
     return d;
 }
 
-void dict_free(Dict *d) {
+void dict_free(Dict* d) {
     for (int i = 0; i < d->capacity; i++) {
         for (int j = 0; j < d->buckets[i].size; j++) {
             free(d->buckets[i].items[j].key);
@@ -36,7 +36,7 @@ void dict_free(Dict *d) {
 }
 
 // djb2 hash function
-unsigned int hash(const char *str) {
+unsigned int hash(const char* str) {
     unsigned int hash = 5381;
     int c;
 
@@ -51,27 +51,27 @@ int get_index(int hashed_key, int capacity) {
     return (hashed_key % capacity + capacity) % capacity;
 }
 
-void dict_set(Dict *d, const char *key, const char *value) {
+void dict_set(Dict* d, const char* key, const char* value) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
     bucket_set(&d->buckets[idx], key, value);
 }
 
-char *dict_get(Dict *d, const char *key) {
+char* dict_get(Dict* d, const char* key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
     return bucket_get(&d->buckets[idx], key);
 }
 
-void dict_remove(Dict *d, const char *key) {
+void dict_remove(Dict* d, const char* key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
     bucket_remove(&d->buckets[idx], key);
 }
 
-void bucket_set(Dict_bucket *b, const char *key, const char *value) {
+void bucket_set(Dict_bucket* b, const char* key, const char* value) {
     Dict_item di;
     di.key = strdup(key);
     di.value = strdup(value);
@@ -88,7 +88,7 @@ void bucket_set(Dict_bucket *b, const char *key, const char *value) {
     b->size++;
 }
 
-char *bucket_get(Dict_bucket *b, const char *key) {
+char* bucket_get(Dict_bucket* b, const char* key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             return b->items[i].value;
@@ -97,7 +97,7 @@ char *bucket_get(Dict_bucket *b, const char *key) {
     return NULL;
 }
 
-void bucket_remove(Dict_bucket *b, const char *key) {
+void bucket_remove(Dict_bucket* b, const char* key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             free(b->items[i].key);
@@ -117,7 +117,7 @@ void bucket_remove(Dict_bucket *b, const char *key) {
     }
 }
 
-void dict_print(Dict *d) {
+void dict_print(Dict* d) {
     printf("==== Dict Start ====\n");
     for (int i = 0; i < d->capacity; i++) {
         printf("Bucket %d (size=%d): ", i, d->buckets[i].size);  // Print bucket size

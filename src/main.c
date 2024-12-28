@@ -6,7 +6,7 @@
 #include "route.h"
 #include "server.h"
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char const* argv[]) {
     int desired_port = 8080;
     if (argc > 1) {
         desired_port = atoi(argv[1]);
@@ -31,7 +31,7 @@ int main(int argc, char const *argv[]) {
     };
     register_route("GET", "/list", "./html/list.html", list_replacements, 3);
 
-    /* CSS */ 
+    /* CSS */
     register_route("GET", "/style.css", "./html/css/style.css", NULL, 0);
 
     /* JS */
@@ -45,7 +45,7 @@ int main(int argc, char const *argv[]) {
         int port_to_try = desired_port + i;
 
         // Prepare arguments for the thread
-        ServerArgs *args = malloc(sizeof(ServerArgs));
+        ServerArgs* args = malloc(sizeof(ServerArgs));
         args->port = port_to_try;
         args->success_flag = &success_flag;
 
