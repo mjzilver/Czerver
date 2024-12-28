@@ -11,6 +11,7 @@
 char *read_file(const char *path) {
     FILE *file = fopen(path, "r");
     if (file == NULL) {
+        printf("Failed to open file: %s\n", path);
         return NULL;
     }
 

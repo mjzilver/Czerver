@@ -6,80 +6,142 @@
 #include <string.h>
 
 #include "utils.h"
+#include "file.h"
 
 const char *delim_start = "{{";
 const char *delim_end = "}}";
 
-void resize_if_needed(char **final_content, size_t *final_length, size_t needed_length) {
-    if (*final_length < needed_length) {
-        *final_length = needed_length * 2;
-        *final_content = realloc(*final_content, *final_length);
-        assert(*final_content != NULL);
+const char *parent_delim_start = "%";
+const char *parent_delim_end = "%";
+
+const char *child_content_marker = "_content_";
+
+void resize_if_needed(char **buffer, size_t *buffer_size, size_t needed_size) {
+    if (*buffer_size < needed_size) {
+        *buffer_size = needed_size * 2;
+        *buffer = realloc(*buffer, *buffer_size);
+        assert(*buffer != NULL);
     }
 }
 
-char *replace_variables(const char *html_content, KeyValuePair replacements[], size_t count) {
-    size_t final_length = strlen(html_content) * 2;
-    char *final_content = malloc(final_length);
-    assert(final_content != NULL);
-    final_content[0] = '\0';
+void append_to_content(char **buffer, size_t *buffer_size, const char *content, size_t length) {
+    size_t current_length = strlen(*buffer);
+    resize_if_needed(buffer, buffer_size, current_length + length + 1);
+    strncat(*buffer, content, length);
+}
+
+char *parse_variables(const char *html_content, KeyValuePair *replacements) {
+    size_t buffer_size = strlen(html_content) * 2;
+    char *result = malloc(buffer_size);
+    assert(result != NULL);
+    result[0] = '\0';
 
     const char *current_pos = html_content;
-    char *final_ptr = final_content;
+    const char *next_delim_start;
 
-    // Iterate through the HTML content
-    while ((current_pos = strstr(current_pos, delim_start)) != NULL) {
-        // Copy everything before the delimiter into final_content
-        size_t part_length = current_pos - html_content;
-        resize_if_needed(&final_content, &final_length, strlen(final_content) + part_length + 1);
-        strncpy(final_ptr, html_content, part_length);
-        final_ptr += part_length;
-
-        // Skip the start delimiter
-        current_pos += strlen(delim_start);
+    while ((next_delim_start = strstr(current_pos, delim_start)) != NULL) {
+        // Append content before the start delimiter
+        append_to_content(&result, &buffer_size, current_pos, next_delim_start - current_pos);
 
         // Find the end delimiter
-        const char *end_pos = strstr(current_pos, delim_end);
-        if (end_pos == NULL) {
+        const char *next_delim_end = strstr(next_delim_start + strlen(delim_start), delim_end);
+        if (!next_delim_end) {
+            fprintf(stderr, "Unmatched delimiter: %s\n", delim_start);
             break;
         }
 
-        // Extract the key
-        size_t key_length = end_pos - current_pos;
+        // Extract the key inside delimiters
+        size_t key_length = next_delim_end - (next_delim_start + strlen(delim_start));
         char *key = malloc(key_length + 1);
-        strncpy(key, current_pos, key_length);
+        assert(key != NULL);
+        strncpy(key, next_delim_start + strlen(delim_start), key_length);
         key[key_length] = '\0';
         trim_whitespace(key);
 
-        // Find the value corresponding to the key
-        const char *value = NULL;
-        for (size_t i = 0; i < count; i++) {
+        // Replace the key with the corresponding value
+        const char *replacement = NULL;
+        for (size_t i = 0; replacements[i].key != NULL; i++) {
             if (strcmp(key, replacements[i].key) == 0) {
-                value = replacements[i].value;
+                replacement = replacements[i].value;
                 break;
             }
         }
-        free(key);
 
-        // If a value is found, append it to the final content
-        if (value != NULL) {
-            size_t value_len = strlen(value);
-            resize_if_needed(&final_content, &final_length, strlen(final_content) + value_len + 1);
-            strcpy(final_ptr, value);
-            final_ptr += value_len;
+        if (replacement) {
+            append_to_content(&result, &buffer_size, replacement, strlen(replacement));
         }
 
-        // Move past the end delimiter
-        current_pos = end_pos + strlen(delim_end);
-        html_content = current_pos;
+        free(key);
+        current_pos = next_delim_end + strlen(delim_end);
     }
 
-    // Append any remaining content after the last delimiter
-    if (html_content != NULL) {
-        size_t remaining_length = strlen(html_content);
-        resize_if_needed(&final_content, &final_length, strlen(final_content) + remaining_length + 1);
-        strcpy(final_ptr, html_content);
+    // Append remaining content
+    append_to_content(&result, &buffer_size, current_pos, strlen(current_pos));
+    return result;
+}
+
+char *parse_parent_template(const char *html_content, const char *main_content) {
+    size_t buffer_size = strlen(html_content) * 2;
+    char *result = malloc(buffer_size);
+    assert(result != NULL);
+    result[0] = '\0';
+
+    const char *current_pos = html_content;
+    const char *next_delim_start;
+
+    while ((next_delim_start = strstr(current_pos, parent_delim_start)) != NULL) {
+        // Append content before the start delimiter
+        append_to_content(&result, &buffer_size, current_pos, next_delim_start - current_pos);
+
+        // Find the end delimiter
+        const char *next_delim_end = strstr(next_delim_start + strlen(parent_delim_start), parent_delim_end);
+        if (!next_delim_end) {
+            fprintf(stderr, "Unmatched delimiter: %s\n", parent_delim_start);
+            break;
+        }
+
+        // Extract the file name inside delimiters
+        size_t key_length = next_delim_end - (next_delim_start + strlen(parent_delim_start));
+        char *key = malloc(key_length + 1);
+        assert(key != NULL);
+        strncpy(key, next_delim_start + strlen(parent_delim_start), key_length);
+        key[key_length] = '\0';
+        trim_whitespace(key);
+
+        // Read the included template file
+        char *included_content = read_file(key);
+        if (!included_content) {
+            fprintf(stderr, "Failed to read included file: %s\n", key);
+            free(key);
+            break;
+        }
+
+        // Insert the main content into the included template
+        const char *placeholder_pos = strstr(included_content, child_content_marker);
+        if (placeholder_pos) {
+            append_to_content(&result, &buffer_size, included_content, placeholder_pos - included_content);
+        } else {
+            fprintf(stderr, "Failed to find placeholder in included file: %s\n", key);
+            append_to_content(&result, &buffer_size, included_content, strlen(included_content));
+        }
+
+        free(included_content);
+        free(key);
+        current_pos = next_delim_end + strlen(parent_delim_end);
     }
+
+    // Append remaining content
+    append_to_content(&result, &buffer_size, current_pos, strlen(current_pos));
+    return result;
+}
+
+char *process_template(const char *html_content, KeyValuePair *replacements) {
+    // Handle parent templates first
+    char *content_with_includes = parse_parent_template(html_content, html_content);
+
+    // Replace variables
+    char *final_content = parse_variables(content_with_includes, replacements);
+    free(content_with_includes);
 
     return final_content;
 }

@@ -12,19 +12,26 @@ int main(int argc, char const *argv[]) {
         desired_port = atoi(argv[1]);
     }
 
-    // Register routes
-    register_route("GET", "/", "./html/index.html", NULL, 0);
-    register_route("GET", "/about", "./html/about.html", NULL, 0);
-    register_route("GET", "/contact", "./html/contact.html", NULL, 0);
+    // Register global variables
+    KeyValuePair globals[] = {
+        {"site_title", "CZerver - Example site"},
+    };
 
-    KeyValuePair replacements[] = {
+    // Register routes
+    register_route("GET", "/", "./html/index.html", globals, 0);
+    register_route("GET", "/about", "./html/about.html", globals, 0);
+    register_route("GET", "/contact", "./html/contact.html", globals, 0);
+
+    // Register a route with replacements
+    KeyValuePair list_replacements[] = {
+        globals[0],
         {"item_one", "First item"},
         {"item_two", "Second item"},
         {"item_three", "Third item"},
     };
-    register_route("GET", "/list", "./html/list.html", replacements, 3);
+    register_route("GET", "/list", "./html/list.html", list_replacements, 3);
 
-    /* CSS */
+    /* CSS */ 
     register_route("GET", "/style.css", "./html/css/style.css", NULL, 0);
 
     /* JS */

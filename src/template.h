@@ -8,6 +8,8 @@ typedef struct {
     char *value;
 } KeyValuePair;
 
-char *replace_variables(const char *html_content, KeyValuePair replacements[], size_t count);
+char *replace_variables(const char *html_content, KeyValuePair replacements[]);
+char *process_template(const char *html_content, KeyValuePair replacements[]);
+char *process_parent_template(const char *html_content, const char *main_content);
 
 #endif

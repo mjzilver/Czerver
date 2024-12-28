@@ -97,27 +97,24 @@ void serve_routes(int client) {
 
                     strcat(response, HTTP_200);
 
-                    char *file_content = routes[i].cached_file;
-
                     char *type_header = get_type_header(routes[i].type);
 
-                    if (routes[i].replacements != NULL) {
-                        file_content = replace_variables(file_content, routes[i].replacements, routes[i].replacements_count);
-                    }
+                    char *file_content = process_template(routes[i].cached_file, routes[i].replacements);
 
                     strcat(response, "Content-Type: ");
                     strcat(response, type_header);
                     strcat(response, "\n\n");
-                    free(type_header);
 
                     strcat(response, file_content);
-
-                    // debug print
+                    
                     #ifdef DEBUG
-                    printf("DEBUG: %s\n ===== \n", response);
+                    printf("RESPONSE:\n%s\n", response);
                     #endif
 
                     send(client, response, strlen(response), 0);
+
+                    free(file_content);
+                
                     return;
                 }
             }
