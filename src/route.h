@@ -2,6 +2,7 @@
 #define ROUTE_H
 
 #include "template.h"
+#include "dict.h"
 
 // Type headers
 #define HTML "text/html"
@@ -26,9 +27,7 @@ typedef struct {
     size_t replacements_count;
 } Route;
 
-#define MAX_ROUTES 100
-extern Route routes[MAX_ROUTES];
-extern int routes_count;
+extern Dict* routes_dict;
 
 void register_route(const char* method, const char* path, const char* file_path, KeyValuePair* replacements, int replacements_count);
 char* get_file_content(const char* path);

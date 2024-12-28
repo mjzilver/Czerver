@@ -21,6 +21,7 @@ int main(int argc, char const* argv[]) {
     register_route("GET", "/", "./html/index.html", globals, 0);
     register_route("GET", "/about", "./html/about.html", globals, 0);
     register_route("GET", "/contact", "./html/contact.html", globals, 0);
+    register_route("GET", "/404", "./html/404.html", globals, 0);
 
     // Register a route with replacements
     KeyValuePair list_replacements[] = {

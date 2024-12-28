@@ -51,13 +51,13 @@ int get_index(int hashed_key, int capacity) {
     return (hashed_key % capacity + capacity) % capacity;
 }
 
-void dict_set(Dict* d, const char* key, const char* value) {
+void dict_set(Dict* d, const char* key, void* value) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
     bucket_set(&d->buckets[idx], key, value);
 }
 
-char* dict_get(Dict* d, const char* key) {
+void* dict_get(Dict* d, const char* key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
@@ -71,11 +71,11 @@ void dict_remove(Dict* d, const char* key) {
     bucket_remove(&d->buckets[idx], key);
 }
 
-void bucket_set(Dict_bucket* b, const char* key, const char* value) {
+void bucket_set(Dict_bucket* b, const char* key, void* value) {
     Dict_item di;
     di.key = strdup(key);
-    di.value = strdup(value);
-    assert(di.key != NULL && di.value != NULL);
+    di.value = value;
+    assert(di.key != NULL);
 
     if (b->size >= b->capacity) {
         printf("Resizing bucket...\n");
@@ -88,7 +88,7 @@ void bucket_set(Dict_bucket* b, const char* key, const char* value) {
     b->size++;
 }
 
-char* bucket_get(Dict_bucket* b, const char* key) {
+void* bucket_get(Dict_bucket* b, const char* key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             return b->items[i].value;
@@ -122,8 +122,7 @@ void dict_print(Dict* d) {
     for (int i = 0; i < d->capacity; i++) {
         printf("Bucket %d (size=%d): ", i, d->buckets[i].size);  // Print bucket size
         for (int j = 0; j < d->buckets[i].size; j++) {
-            printf("(%s=%s) ", d->buckets[i].items[j].key,
-                   d->buckets[i].items[j].value);
+            printf("(%s=%p) ", d->buckets[i].items[j].key, d->buckets[i].items[j].value);
         }
         printf("\n");
     }

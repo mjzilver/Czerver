@@ -80,43 +80,44 @@ void serve_routes(int client) {
     int bytes_received = recv(client, buffer, 1023, 0);
     if (bytes_received > 0) {
         buffer[bytes_received] = '\0';
-        printf("%s\n", buffer);
+
+        printf("Received:\n%s\n", buffer);
 
         if (strstr(buffer, "GET") != NULL) {
             char path[256];
             sscanf(buffer, "GET %s HTTP/1.1", path);
 
-            for (int i = 0; i < routes_count; i++) {
-                if (strcmp(routes[i].path, path) == 0) {
-                    const char* requested_method = strtok(buffer, " ");
-                    if (strcmp(routes[i].method, requested_method) != 0) {
-                        continue;
-                    }
+            Route* route = DICT_GET_AS(Route, routes_dict, path);
 
-                    char response[2048] = {0};
-
-                    strcat(response, HTTP_200);
-
-                    char* type_header = get_type_header(routes[i].type);
-
-                    char* file_content = process_template(routes[i].cached_file, routes[i].replacements);
-
-                    strcat(response, "Content-Type: ");
-                    strcat(response, type_header);
-                    strcat(response, "\n\n");
-
-                    strcat(response, file_content);
-
-#ifdef DEBUG
-                    printf("RESPONSE:\n%s\n", response);
-#endif
-
-                    send(client, response, strlen(response), 0);
-
-                    free(file_content);
+            if (route != NULL) {
+                const char* requested_method = strtok(buffer, " ");
+                if (strcmp(route->method, requested_method) != 0) {
+                    send_404(path, client);
 
                     return;
                 }
+
+                char response[2048] = {0};
+
+                strcat(response, HTTP_200);
+
+                char* type_header = get_type_header(route->type);
+
+                char* file_content = process_template(route->cached_file, route->replacements);
+
+                strcat(response, "Content-Type: ");
+                strcat(response, type_header);
+                strcat(response, "\n\n");
+
+                strcat(response, file_content);
+
+                send(client, response, strlen(response), 0);
+
+                printf("Response:\n%s\n", response);
+
+                free(file_content);
+
+                return;
             }
 
             send_404(path, client);
