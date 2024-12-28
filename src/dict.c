@@ -16,8 +16,8 @@ Dict* dict_new(int initial_capacity) {
 
     for (int i = 0; i < initial_capacity; i++) {
         d->buckets[i].size = 0;
-        d->buckets[i].capacity = 2;
-        d->buckets[i].items = malloc(sizeof(Dict_item) * 5);
+        d->buckets[i].capacity = INITIAL_BUCKET_CAPACITY;
+        d->buckets[i].items = malloc(sizeof(Dict_item) * INITIAL_BUCKET_CAPACITY);
         assert(d->buckets[i].items != NULL);
     }
     return d;
@@ -78,7 +78,6 @@ void bucket_set(Dict_bucket* b, const char* key, void* value) {
     assert(di.key != NULL);
 
     if (b->size >= b->capacity) {
-        printf("Resizing bucket...\n");
         b->capacity *= 2;
         b->items = realloc(b->items, sizeof(Dict_item) * b->capacity);
         assert(b->items != NULL);
@@ -120,7 +119,7 @@ void bucket_remove(Dict_bucket* b, const char* key) {
 void dict_print(Dict* d) {
     printf("==== Dict Start ====\n");
     for (int i = 0; i < d->capacity; i++) {
-        printf("Bucket %d (size=%d): ", i, d->buckets[i].size);  // Print bucket size
+        printf("Bucket %d (size=%d): ", i, d->buckets[i].size);
         for (int j = 0; j < d->buckets[i].size; j++) {
             printf("(%s=%p) ", d->buckets[i].items[j].key, d->buckets[i].items[j].value);
         }

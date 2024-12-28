@@ -8,18 +8,18 @@
 // Macro to get a value from a dictionary as a specific type
 #define DICT_GET_AS(type, dict, key) ((type*)dict_get(dict, key))
 
-typedef struct {
+typedef struct Dict_item {
     char* key;
     void* value;
 } Dict_item;
 
-typedef struct {
+typedef struct Dict_bucket {
     Dict_item* items;
     int size;
     int capacity;
 } Dict_bucket;
 
-typedef struct {
+typedef struct Dict {
     Dict_bucket* buckets;
     int size;
     int capacity;
@@ -37,4 +37,4 @@ void bucket_set(Dict_bucket* buck, const char* key, void* value);
 void* bucket_get(Dict_bucket* buck, const char* key);
 void bucket_remove(Dict_bucket* buck, const char* key);
 
-#endif  // HASHMAP_H
+#endif

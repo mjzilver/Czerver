@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-typedef struct {
+typedef struct KeyValuePair {
     char* key;
     char* value;
 } KeyValuePair;

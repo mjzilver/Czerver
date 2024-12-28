@@ -1,20 +1,20 @@
 #include "route.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
-#include <assert.h> 
 
+#include "dict.h"
 #include "file.h"
 #include "http_codes.h"
-#include "dict.h"
 
 Dict* routes_dict = NULL;
 
 void register_route(const char* method, const char* path, const char* file_path, KeyValuePair* replacements, int replacements_count) {
     Route* route = malloc(sizeof(Route));
-    assert(route != NULL);    
+    assert(route != NULL);
 
     strcpy(route->method, method);
     strcpy(route->path, path);

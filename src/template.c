@@ -137,11 +137,16 @@ char* parse_parent_template(const char* html_content, const char* main_content) 
 
 char* process_template(const char* html_content, KeyValuePair* replacements) {
     // Handle parent templates first
-    char* content_with_includes = parse_parent_template(html_content, html_content);
+    char* content = strdup(html_content);
+    while (strstr(content, parent_delim_start) != NULL) {
+        char* temp_content = parse_parent_template(content, html_content);
+        free(content);
+        content = temp_content;
+    }
 
     // Replace variables
-    char* final_content = parse_variables(content_with_includes, replacements);
-    free(content_with_includes);
+    char* final_content = parse_variables(content, replacements);
+    free(content);
 
     return final_content;
 }

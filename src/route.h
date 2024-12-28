@@ -1,8 +1,8 @@
 #ifndef ROUTE_H
 #define ROUTE_H
 
-#include "template.h"
 #include "dict.h"
+#include "template.h"
 
 // Type headers
 #define HTML "text/html"
@@ -10,14 +10,14 @@
 #define JS "application/javascript"
 
 // Type enum
-typedef enum {
+typedef enum FileType {
     HTML_TYPE,
     CSS_TYPE,
     JS_TYPE,
     UNKNOWN_TYPE
 } FileType;
 
-typedef struct {
+typedef struct Route {
     char method[8];
     char path[256];
     char file_path[256];
