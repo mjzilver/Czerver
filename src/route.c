@@ -19,6 +19,17 @@ void register_route(const char *method, const char *path, const char *file_path,
     route.cached_file = get_file_content(file_path);
     route.replacements = replacements;
     route.replacements_count = replacements_count;
+
+    if (strstr(file_path, ".html") != NULL) {
+        route.type = HTML_TYPE;
+    } else if (strstr(file_path, ".css") != NULL) {
+        route.type = CSS_TYPE;
+    } else if (strstr(file_path, ".js") != NULL) {
+        route.type = JS_TYPE;
+    } else {
+        route.type = UNKNOWN_TYPE;
+    }
+
     if (route.cached_file == NULL) {
         perror("Failed to load file content");
         exit(1);
@@ -26,8 +37,17 @@ void register_route(const char *method, const char *path, const char *file_path,
     routes[routes_count++] = route;
 }
 
-int try_send_file(char *path, int client) {
-    return send_file(path, client);
+char* get_type_header(FileType type) {
+    switch (type) {
+        case HTML_TYPE:
+            return "text/html";
+        case CSS_TYPE:
+            return "text/css";
+        case JS_TYPE:
+            return "application/javascript";
+        default:
+            return "text/plain";
+    }
 }
 
 char *get_file_content(const char *path) {
@@ -43,11 +63,11 @@ void free_routes() {
 }
 
 void send_404(char *path, int client) {
-    char *response = malloc(strlen(not_found_404) + strlen(path) + 1);
+    char *response = malloc(strlen(HTTP_404) + strlen(path) + 1);
     if (response == NULL)
         return;
 
-    strcpy(response, not_found_404);
+    strcpy(response, HTTP_404);
     strcat(response, path);
 
     send(client, response, strlen(response), 0);

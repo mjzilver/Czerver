@@ -24,6 +24,12 @@ int main(int argc, char const *argv[]) {
     };
     register_route("GET", "/list", "./html/list.html", replacements, 3);
 
+    /* CSS */
+    register_route("GET", "/style.css", "./html/css/style.css", NULL, 0);
+
+    /* JS */
+    // nothing here yet
+
     pthread_t thread_id;
     int success_flag = 0;
     int max_retries = 5;
@@ -42,11 +48,8 @@ int main(int argc, char const *argv[]) {
         pthread_join(thread_id, NULL);
 
         if (!success_flag) {
-            printf("Failed to start server on port %d, trying next port...\n",
-                   port_to_try);
+            printf("Failed to start server on port %d, trying next port...\n", port_to_try);
         }
-
-        free(args);
 
         if (i == max_retries) {
             printf("All attempts failed. Server could not start.\n");

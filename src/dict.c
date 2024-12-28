@@ -35,6 +35,7 @@ void dict_free(Dict *d) {
     free(d);
 }
 
+// djb2 hash function
 unsigned int hash(const char *str) {
     unsigned int hash = 5381;
     int c;

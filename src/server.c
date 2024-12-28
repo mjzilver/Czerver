@@ -95,19 +95,27 @@ void serve_routes(int client) {
 
                     char response[2048] = {0};
 
-                    strncpy(response, ok_200, strlen(ok_200));
+                    strcat(response, HTTP_200);
 
                     char *file_content = routes[i].cached_file;
+
+                    char *type_header = get_type_header(routes[i].type);
 
                     if (routes[i].replacements != NULL) {
                         file_content = replace_variables(file_content, routes[i].replacements, routes[i].replacements_count);
                     }
 
+                    strcat(response, "Content-Type: ");
+                    strcat(response, type_header);
+                    strcat(response, "\n\n");
+                    free(type_header);
+
                     strcat(response, file_content);
-                    free(file_content);
 
                     // debug print
-                    printf("%s\n", response);
+                    #ifdef DEBUG
+                    printf("DEBUG: %s\n ===== \n", response);
+                    #endif
 
                     send(client, response, strlen(response), 0);
                     return;
