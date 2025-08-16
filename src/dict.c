@@ -69,11 +69,6 @@ void dict_remove(Dict *d, const char *key) {
     bucket_remove(&d->buckets[idx], key);
 }
 
-void dict_set_or_replace(Dict *d, const char *key, void *value) {
-    dict_remove(d, key);
-    dict_set(d, key, value);
-}
-
 void bucket_set(Dict_bucket *b, const char *key, void *value) {
     Dict_item di;
     di.key = strdup(key);

@@ -109,7 +109,19 @@ void register_route(const char *method, const char *url_path, const char *file_p
         routes_dict = dict_new(INITIAL_DICT_CAPACITY);
     }
 
-    dict_set_or_replace(routes_dict, url_path, route);
+    unregister_route(url_path);
+    dict_set(routes_dict, url_path, route);
+}
+
+void unregister_route(const char *url_path) {
+    Route *route = DICT_GET_AS(Route, routes_dict, url_path);
+    if (route != NULL) {
+        if(route->cached_file) {
+            free(route->cached_file);
+        }
+
+        dict_remove(routes_dict, url_path);
+    }
 }
 
 char *get_type_header(FileType type) {

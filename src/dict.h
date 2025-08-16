@@ -32,7 +32,6 @@ void dict_print(Dict *d);
 void dict_set(Dict *d, const char *key, void *value);
 void *dict_get(Dict *d, const char *key);
 void dict_remove(Dict *d, const char *key);
-void dict_set_or_replace(Dict *d, const char *key, void *value);
 
 void bucket_set(Dict_bucket *buck, const char *key, void *value);
 void *bucket_get(Dict_bucket *buck, const char *key);

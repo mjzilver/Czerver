@@ -23,6 +23,7 @@ extern Dict *routes_dict;
 
 void register_route(const char *method, const char *url_path, const char *file_path, KeyValuePair *replacements);
 void register_folder(const char *url_path, const char *file_path, KeyValuePair *replacements);
+void unregister_route(const char *url_path);
 char *get_file_content(const char *path);
 void free_routes();
 void send_404(char *path, int client);
