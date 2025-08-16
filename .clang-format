@@ -1,22 +1,4 @@
 BasedOnStyle: Google
-IndentWidth: 4 
-UseTab: Never 
-ColumnLimit: 0
-BreakBeforeBraces: Attach 
-BraceWrapping:
-  AfterClass: false
-  AfterControlStatement: false
-  AfterEnum: false
-  AfterFunction: false
-  AfterNamespace: false
-  AfterStruct: false
-  AfterUnion: false
-  BeforeCatch: false
-  BeforeElse: false
-  BeforeLambdaBody: false
-IndentCaseLabels: false 
-SpaceBeforeParens: ControlStatements
-SpacesInConditionalStatement: false 
-KeepEmptyLinesAtTheStartOfBlocks: false 
-DerivePointerAlignment: false
-PointerAlignment: Left
+IndentWidth: 4
+ColumnLimit: 120
+AccessModifierOffset: -4

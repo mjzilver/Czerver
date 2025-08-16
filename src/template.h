@@ -4,12 +4,10 @@
 #include <stddef.h>
 
 typedef struct KeyValuePair {
-    char* key;
-    char* value;
+    char *key;
+    char *value;
 } KeyValuePair;
 
-char* replace_variables(const char* html_content, KeyValuePair replacements[]);
-char* process_template(const char* html_content, KeyValuePair replacements[]);
-char* process_parent_template(const char* html_content, const char* main_content);
+char *process_template(const char *template_content, KeyValuePair *replacements);
 
 #endif

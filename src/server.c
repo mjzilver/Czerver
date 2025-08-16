@@ -12,19 +12,18 @@
 
 struct sockaddr_in addr;
 
-struct sockaddr_in* create_address(int port) {
+struct sockaddr_in *create_address(int port) {
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     return &addr;
 }
 
-void* start_server_wrapper(void* args) {
-    ServerArgs* server_args = (ServerArgs*)args;
+void *start_server_wrapper(void *args) {
+    ServerArgs *server_args = (ServerArgs *)args;
     int port = server_args->port;
-    int* success_flag = server_args->success_flag;
+    int *success_flag = server_args->success_flag;
 
-    // Set success flag based on the server's return code
     *success_flag = (start_server(port) == 0);
 
     free(server_args);
@@ -43,9 +42,9 @@ int start_server(int port) {
         return 1;
     }
 
-    struct sockaddr_in* adrr = create_address(port);
+    struct sockaddr_in *adrr = create_address(port);
 
-    if (bind(sock, (struct sockaddr*)adrr, sizeof(*adrr)) < 0) {
+    if (bind(sock, (struct sockaddr *)adrr, sizeof(*adrr)) < 0) {
         perror("Failed to bind the socket");
         return 1;
     }
@@ -63,6 +62,8 @@ int start_server(int port) {
             perror("Failed to accept the connection");
             continue;
         }
+
+        printf("Client has connected\n");
 
         serve_routes(client);
 
@@ -87,10 +88,10 @@ void serve_routes(int client) {
             char path[256];
             sscanf(buffer, "GET %s HTTP/1.1", path);
 
-            Route* route = DICT_GET_AS(Route, routes_dict, path);
+            Route *route = DICT_GET_AS(Route, routes_dict, path);
 
             if (route != NULL) {
-                const char* requested_method = strtok(buffer, " ");
+                const char *requested_method = strtok(buffer, " ");
                 if (strcmp(route->method, requested_method) != 0) {
                     send_404(path, client);
 
@@ -101,9 +102,9 @@ void serve_routes(int client) {
 
                 strcat(response, HTTP_200);
 
-                char* type_header = get_type_header(route->type);
+                char *type_header = get_type_header(route->type);
 
-                char* file_content = process_template(route->cached_file, route->replacements);
+                char *file_content = process_template(route->cached_file, route->replacements);
 
                 strcat(response, "Content-Type: ");
                 strcat(response, type_header);
