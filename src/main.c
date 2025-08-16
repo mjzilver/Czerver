@@ -49,11 +49,11 @@ int main(int argc, char const *argv[]) {
 
         if (i == max_retries) {
             printf("All attempts failed. Server could not start.\n");
-            free_routes();
+            unregister_all_routes();
             return 1;
         }
     }
 
-    free_routes();
+    unregister_all_routes();
     return 0;
 }

@@ -5,8 +5,8 @@ PID=$!
 
 cleanup() {
     echo "Killing process $PID"
-    kill $PID 2>/dev/null
-    wait $PID 2>/dev/null
+    kill $PID
+    wait $PID
     exit
 }
 

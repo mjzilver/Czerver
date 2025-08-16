@@ -25,7 +25,7 @@ void register_route(const char *method, const char *url_path, const char *file_p
 void register_folder(const char *url_path, const char *file_path, KeyValuePair *replacements);
 void unregister_route(const char *url_path);
 char *get_file_content(const char *path);
-void free_routes();
+void unregister_all_routes();
 void send_404(char *path, int client);
 char *get_type_header(FileType type);
 

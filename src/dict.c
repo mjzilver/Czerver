@@ -27,7 +27,6 @@ void dict_free_all(Dict *d) {
     for (int i = 0; i < d->capacity; i++) {
         for (int j = 0; j < d->buckets[i].size; j++) {
             free(d->buckets[i].items[j].key);
-            free(d->buckets[i].items[j].value);
         }
         free(d->buckets[i].items);
     }
@@ -69,6 +68,15 @@ void dict_remove(Dict *d, const char *key) {
     bucket_remove(&d->buckets[idx], key);
 }
 
+void dict_iterate(Dict *d, DictCallback cb) {
+    for (int i = 0; i < d->capacity; i++) {
+        Dict_bucket *b = &d->buckets[i];
+        for (int j = 0; j < b->size; j++) {
+            cb(b->items[j].key, b->items[j].value);
+        }
+    }
+}
+
 void bucket_set(Dict_bucket *b, const char *key, void *value) {
     Dict_item di;
     di.key = strdup(key);
@@ -98,7 +106,6 @@ void bucket_remove(Dict_bucket *b, const char *key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             free(b->items[i].key);
-            free(b->items[i].value);
 
             // Shift the items
             for (int k = i + 1; k < b->size; k++) {

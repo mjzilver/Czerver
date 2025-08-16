@@ -113,15 +113,25 @@ void register_route(const char *method, const char *url_path, const char *file_p
     dict_set(routes_dict, url_path, route);
 }
 
+void free_route_callback(const char *key, void *value) {
+    Route *route = value;
+    if (route->cached_file) free(route->cached_file);
+    free(route);
+}
+
 void unregister_route(const char *url_path) {
     Route *route = DICT_GET_AS(Route, routes_dict, url_path);
     if (route != NULL) {
-        if(route->cached_file) {
-            free(route->cached_file);
-        }
-
-        dict_remove(routes_dict, url_path);
+        free_route_callback(url_path, route);
     }
+}
+
+void unregister_all_routes() {
+    if (!routes_dict) return;
+
+    dict_iterate(routes_dict, free_route_callback);
+    dict_free_all(routes_dict);
+    routes_dict = NULL;
 }
 
 char *get_type_header(FileType type) {
@@ -138,13 +148,6 @@ char *get_type_header(FileType type) {
 }
 
 char *get_file_content(const char *path) { return read_file(path); }
-
-void free_routes() {
-    if (routes_dict == NULL) {
-        return;
-    }
-    dict_free_all(routes_dict);
-}
 
 void send_404(char *path, int client) {
     char *response = malloc(strlen(HTTP_404) + strlen(path) + 1);
