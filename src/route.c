@@ -113,7 +113,7 @@ void register_route(const char *method, const char *url_path, const char *file_p
     dict_set(routes_dict, url_path, route);
 }
 
-void free_route_callback(const char *key, void *value) {
+void free_route(const char *key, void *value) {
     Route *route = value;
     if (route->cached_file) free(route->cached_file);
     free(route);
@@ -122,14 +122,15 @@ void free_route_callback(const char *key, void *value) {
 void unregister_route(const char *url_path) {
     Route *route = DICT_GET_AS(Route, routes_dict, url_path);
     if (route != NULL) {
-        free_route_callback(url_path, route);
+        free_route(url_path, route);
     }
+    dict_remove(routes_dict, url_path);
 }
 
 void unregister_all_routes() {
     if (!routes_dict) return;
 
-    dict_iterate(routes_dict, free_route_callback);
+    dict_iterate(routes_dict, free_route);
     dict_free_all(routes_dict);
     routes_dict = NULL;
 }
