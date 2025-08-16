@@ -16,7 +16,7 @@ int main(int argc, char const *argv[]) {
         {"site_title", "CZerver - Example site"},
     };
 
-    register_folder("/", "./html", globals);
+    register_folder("/", "./public", globals);
 
     KeyValuePair list_replacements[] = {
         globals[0],
@@ -25,8 +25,7 @@ int main(int argc, char const *argv[]) {
         {"item_three", "Third item"},
     };
 
-    // Overwrite this route with variables
-    register_route("GET", "/list.html", "./html/list.html", list_replacements);
+    register_route("GET", "/list.html", "./public/list.html", list_replacements);
 
     pthread_t thread_id;
     int success_flag = 0;

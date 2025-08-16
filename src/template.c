@@ -39,7 +39,7 @@ Buffer *parse_variables(const char *template_content, KeyValuePair *replacements
         const char *next_delim_end = strstr(next_delim_start + strlen(VAR_DELIM_START), VAR_DELIM_END);
         if (!next_delim_end) {
             fprintf(stderr, "Unmatched delimiter: %s\n", VAR_DELIM_START);
-            break;
+            return NULL;
         }
 
         char *key = extract_key(next_delim_start, next_delim_end, strlen(VAR_DELIM_START));
@@ -76,7 +76,7 @@ Buffer *parse_parent_template(const char *template_content, const char *main_con
         const char *next_delim_end = strstr(next_delim_start + strlen(PARENT_DELIM_START), PARENT_DELIM_END);
         if (!next_delim_end) {
             fprintf(stderr, "Unmatched delimiter: %s\n", PARENT_DELIM_START);
-            break;
+            return NULL;
         }
 
         char *key = extract_key(next_delim_start, next_delim_end, strlen(PARENT_DELIM_START));
@@ -85,7 +85,7 @@ Buffer *parse_parent_template(const char *template_content, const char *main_con
         if (!included_content) {
             fprintf(stderr, "Failed to read included file: %s\n", key);
             free(key);
-            break;
+            return NULL;
         }
 
         const char *placeholder_pos = strstr(included_content, CHILD_CONTENT_MARKER);

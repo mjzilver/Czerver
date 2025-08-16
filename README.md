@@ -9,8 +9,8 @@ Tested on **macOS** and **Linux** (UNIX only).
 
 ## Features
 
-* Serves static files (HTML, CSS, JS) from `/html`
-* Automatic **route registration** for everything under `/html`
+* Serves static files (HTML, CSS, JS) from `/public`
+* Automatic **route registration** for everything under `/public`
 * **Template inheritance** via `_content_` placeholders
 * **Variable injection** using `{{ variable_name }}`
 
@@ -18,10 +18,10 @@ Tested on **macOS** and **Linux** (UNIX only).
 
 ## Example Templates
 
-### `./html/list.html`
+### `./public/list.html`
 
 ```html
-% ./html/nav.html %
+% ./public/nav.html %
 
 <h1>This is a list of items to show variable templating</h1>
 <ul>
@@ -31,10 +31,10 @@ Tested on **macOS** and **Linux** (UNIX only).
 </ul>
 ```
 
-### `./html/nav.html`
+### `./public/nav.html`
 
 ```html
-% ./html/header.html %
+% ./public/header.html %
 
 <nav>
     <a class="nav_item" href="/">Home</a>
@@ -48,7 +48,7 @@ Tested on **macOS** and **Linux** (UNIX only).
 </div>
 ```
 
-### `./html/base.html`
+### `./public/base.html`
 
 ```html
 <!DOCTYPE html>
