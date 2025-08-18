@@ -12,12 +12,17 @@ CFLAGS = -Wall -g
 
 all: build run
 
-build: $(OBJ_FILES)
-	mkdir -p $(BIN_DIR) $(OBJ_DIR)
+build: $(OBJ_FILES) $(BIN_DIR)
 	$(CC) -o $(BIN_DIR)/main $(OBJ_FILES)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I$(SRC_DIR) -c $< -o $@
+
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
+
+$(OBJ_DIR):
+	mkdir -p ${OBJ_DIR}
 
 run: build
 	$(BIN_DIR)/main
