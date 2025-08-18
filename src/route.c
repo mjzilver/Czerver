@@ -31,7 +31,7 @@ char *join_url_path(const char *url_path, const char *name) {
     return result;
 }
 
-void register_folder(const char *url_path, const char *file_path, KeyValuePair *replacements) {
+void register_folder(const char *method, const char *url_path, const char *file_path) {
     DIR *dir = opendir(file_path);
     assert(dir != NULL);
 
@@ -49,12 +49,12 @@ void register_folder(const char *url_path, const char *file_path, KeyValuePair *
         if (S_ISDIR(st.st_mode)) {
             char *sub_url_path = join_url_path(url_path, entry->d_name);
             printf("Recursively registering subfolder %s as %s\n", full_path, sub_url_path);
-            register_folder(sub_url_path, full_path, replacements);
+            register_folder(method, sub_url_path, full_path);
             free(sub_url_path);
         } else if (S_ISREG(st.st_mode)) {
             char *file_url_path = join_url_path(url_path, entry->d_name);
             printf("Registering file: %s as URL path %s\n", full_path, file_url_path);
-            register_route("GET", file_url_path, full_path, replacements);
+            register_route(method, file_url_path, full_path);
 
             if (strcmp(entry->d_name, "index.html") == 0) {
                 char *dir_url_path;
@@ -67,7 +67,7 @@ void register_folder(const char *url_path, const char *file_path, KeyValuePair *
                 }
 
                 printf("Registering index for %s\n", dir_url_path);
-                register_route("GET", dir_url_path, full_path, replacements);
+                register_route(method, dir_url_path, full_path);
                 free(dir_url_path);
             }
 
@@ -80,7 +80,7 @@ void register_folder(const char *url_path, const char *file_path, KeyValuePair *
     closedir(dir);
 }
 
-void register_route(const char *method, const char *url_path, const char *file_path, KeyValuePair *replacements) {
+void register_route(const char *method, const char *url_path, const char *file_path) {
     Route *route = malloc(sizeof(Route));
     assert(route != NULL);
 
@@ -88,7 +88,6 @@ void register_route(const char *method, const char *url_path, const char *file_p
     strcpy(route->url_path, url_path);
     strcpy(route->file_path, file_path);
     route->cached_file = get_file_content(file_path);
-    route->replacements = replacements;
 
     if (strstr(file_path, ".html") != NULL) {
         route->type = HTML_TYPE;
@@ -159,7 +158,7 @@ void send_404(char *path, int client) {
 
     Route *route = DICT_GET_AS(Route, routes_dict, "/404");
     if (route != NULL) {
-        char *file_content = process_template(route->cached_file, route->replacements);
+        char *file_content = process_template(route->cached_file);
         response = realloc(response, strlen(response) + strlen(file_content) + 1);
         assert(response != NULL);
         strcat(response, file_content);

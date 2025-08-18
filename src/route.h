@@ -16,13 +16,12 @@ typedef struct Route {
     char file_path[256];
     char *cached_file;
     FileType type;
-    KeyValuePair *replacements;
 } Route;
 
 extern Dict *routes_dict;
 
-void register_route(const char *method, const char *url_path, const char *file_path, KeyValuePair *replacements);
-void register_folder(const char *url_path, const char *file_path, KeyValuePair *replacements);
+void register_route(const char *method, const char *url_path, const char *file_path);
+void register_folder(const char *method, const char *url_path, const char *file_path);
 void unregister_route(const char *url_path);
 char *get_file_content(const char *path);
 void unregister_all_routes();

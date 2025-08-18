@@ -6,26 +6,21 @@
 #include "route.h"
 #include "server.h"
 
+Dict *var_dict = NULL;
+
 int main(int argc, char const *argv[]) {
     int desired_port = 8080;
     if (argc > 1) {
         desired_port = atoi(argv[1]);
     }
+    var_dict = dict_new(10);
 
-    KeyValuePair globals[] = {
-        {"site_title", "CZerver - Example site"},
-    };
+    dict_set(var_dict, "site_title", "CZerver - Example site");
+    dict_set(var_dict, "item_one", "First item");
+    dict_set(var_dict, "item_two", "Second item");
+    dict_set(var_dict, "item_three", "Third item");
 
-    register_folder("/", "./public", globals);
-
-    KeyValuePair list_replacements[] = {
-        globals[0],
-        {"item_one", "First item"},
-        {"item_two", "Second item"},
-        {"item_three", "Third item"},
-    };
-
-    register_route("GET", "/list.html", "./public/list.html", list_replacements);
+    register_folder("GET", "/", "./public");
 
     pthread_t thread_id;
     int success_flag = 0;
@@ -54,5 +49,6 @@ int main(int argc, char const *argv[]) {
     }
 
     unregister_all_routes();
+    dict_free_all(var_dict);
     return 0;
 }

@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "buff.h"
 #include "file.h"
 #include "utils.h"
-#include "buff.h"
 
 const char *VAR_DELIM_START = "{{";
 const char *VAR_DELIM_END = "}}";
@@ -16,6 +16,8 @@ const char *PARENT_DELIM_START = "%";
 const char *PARENT_DELIM_END = "%";
 
 const char *CHILD_CONTENT_MARKER = "_content_";
+
+extern Dict *var_dict;
 
 char *extract_key(const char *start, const char *end, size_t delim_len) {
     size_t key_length = end - (start + delim_len);
@@ -27,7 +29,7 @@ char *extract_key(const char *start, const char *end, size_t delim_len) {
     return key;
 }
 
-Buffer *parse_variables(const char *template_content, KeyValuePair *replacements) {
+Buffer *parse_variables(const char *template_content) {
     Buffer *processed_content = buffer_new(strlen(template_content) * 2);
 
     const char *current_pos = template_content;
@@ -43,14 +45,7 @@ Buffer *parse_variables(const char *template_content, KeyValuePair *replacements
         }
 
         char *key = extract_key(next_delim_start, next_delim_end, strlen(VAR_DELIM_START));
-
-        const char *replacement = NULL;
-        for (size_t i = 0; replacements[i].key != NULL; i++) {
-            if (strcmp(key, replacements[i].key) == 0) {
-                replacement = replacements[i].value;
-                break;
-            }
-        }
+        const char *replacement = DICT_GET_AS(const char, var_dict, key);
 
         if (replacement) {
             buffer_append(processed_content, replacement, strlen(replacement));
@@ -105,7 +100,7 @@ Buffer *parse_parent_template(const char *template_content, const char *main_con
     return processed_content;
 }
 
-char *process_template(const char *template_content, KeyValuePair *replacements) {
+char *process_template(const char *template_content) {
     char *content = strdup(template_content);
     while (strstr(content, PARENT_DELIM_START) != NULL) {
         Buffer *combined_content = parse_parent_template(content, template_content);
@@ -113,7 +108,7 @@ char *process_template(const char *template_content, KeyValuePair *replacements)
         content = buffer_take_data(combined_content);
     }
 
-    Buffer *final_content = parse_variables(content, replacements);
+    Buffer *final_content = parse_variables(content);
     free(content);
 
     return buffer_take_data(final_content);

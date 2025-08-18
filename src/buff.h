@@ -15,4 +15,4 @@ void buffer_resize(Buffer *buf, size_t needed_size);
 void buffer_free(Buffer *buf);
 char *buffer_take_data(Buffer *buf);
 
-#endif 
+#endif

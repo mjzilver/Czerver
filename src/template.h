@@ -3,11 +3,6 @@
 
 #include <stddef.h>
 
-typedef struct KeyValuePair {
-    char *key;
-    char *value;
-} KeyValuePair;
-
-char *process_template(const char *template_content, KeyValuePair *replacements);
+char *process_template(const char *template_content);
 
 #endif

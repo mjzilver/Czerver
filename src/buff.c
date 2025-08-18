@@ -1,7 +1,8 @@
 #include "buff.h"
+
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 Buffer *buffer_new(size_t initial_size) {
     Buffer *buf = malloc(sizeof(Buffer));

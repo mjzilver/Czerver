@@ -104,7 +104,7 @@ void serve_routes(int client) {
 
                 char *type_header = get_type_header(route->type);
 
-                char *file_content = process_template(route->cached_file, route->replacements);
+                char *file_content = process_template(route->cached_file);
 
                 strcat(response, "Content-Type: ");
                 strcat(response, type_header);
