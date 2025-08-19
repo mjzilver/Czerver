@@ -79,6 +79,75 @@ void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
     }
 }
 
+ArrayList *dict_set_arr(Dict *d, const char *key, void **values, size_t len) {
+    ArrayList *list = malloc(sizeof(ArrayList));
+    list->len = len;
+    list->values = malloc(sizeof(void *) * len);
+
+    for (size_t i = 0; i < len; i++) {
+        list->values[i] = values[i];
+    }
+
+    dict_set(d, key, list);
+    return list;
+}
+
+ArrayList *dict_get_arr(Dict *d, const char *key) { return DICT_GET_AS(ArrayList, d, key); }
+
+ArrayList *dict_append_arr(Dict *d, const char *key, void **values, size_t len) {
+    ArrayList *old = dict_get_arr(d, key);
+
+    ArrayList *new = malloc(sizeof(ArrayList));
+    new->len = old->len + len;
+    new->values = malloc(sizeof(void *) * new->len);
+
+    for (size_t i = 0; i < old->len; i++) {
+        new->values[i] = old->values[i];
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        size_t idx = old->len + i;
+        new->values[idx] = values[i];
+    }
+
+    dict_set(d, key, new);
+    free(old->values);
+    free(old);
+    return new;
+}
+
+ArrayList *dict_remove_arr(Dict *d, const char *key, void *value_to_remove, CompareFunc cmp) {
+    ArrayList *old = dict_get_arr(d, key);
+    if (!old || old->len == 0) return NULL;
+
+    size_t new_len = 0;
+    for (size_t i = 0; i < old->len; i++) {
+        if (cmp(old->values[i], value_to_remove) != 0) {
+            new_len++;
+        }
+    }
+
+    ArrayList *new = malloc(sizeof(ArrayList));
+    new->len = new_len;
+    new->values = malloc(sizeof(void *) * new_len);
+
+    size_t j = 0;
+    for (size_t i = 0; i < old->len; i++) {
+        if (cmp(old->values[i], value_to_remove) != 0) {
+            new->values[j++] = old->values[i];
+        } else {
+            free(old->values[i]); 
+        }
+    }
+
+    dict_set(d, key, new);
+
+    free(old->values);
+    free(old);
+
+    return new;
+}
+
 void bucket_set(Dict_bucket *b, const char *key, void *value) {
     Dict_item di;
     di.key = strdup(key);

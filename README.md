@@ -12,6 +12,7 @@ Tested on **macOS** and **Linux** (UNIX only).
 * Automatic **route registration** for everything under `/public`
 * **Template inheritance** via `_content_` placeholders
 * **Variable injection** using `{{ variable_name }}`
+* **For loops** using `#for item in items`
 * **Post requests** handled via Lua
 
 ---

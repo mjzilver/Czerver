@@ -23,6 +23,29 @@ static int lua_dict_replace(lua_State *L) {
     return 0;
 }
 
+static int lua_dict_arr_append(lua_State *L) {
+    const char *list_name = luaL_checkstring(L, 1);
+    const char *value = luaL_checkstring(L, 2);
+
+    const char *items[] = {strdup(value)};
+
+    dict_append_arr(var_dict, list_name, (void **)items, 1);
+    return 0;
+}
+
+int str_cmp(const void *a, const void *b) {
+    return strcmp((const char *)a, (const char *)b);
+}
+
+static int lua_dict_arr_remove(lua_State *L) {
+    const char *list_name = luaL_checkstring(L, 1);
+    const char *value = luaL_checkstring(L, 2);
+
+
+    dict_remove_arr(var_dict, list_name, (void *)value, str_cmp);
+    return 0;
+}
+
 static int lua_redirect(lua_State *L) {
     const char *url = luaL_checkstring(L, 1);
     char redirect_buf[512];
@@ -83,6 +106,12 @@ char *execute_lua(const char *lua_file, const char *post_body) {
 
     lua_pushcfunction(L, lua_dict_replace);
     lua_setglobal(L, "set_var");
+
+    lua_pushcfunction(L, lua_dict_arr_append);
+    lua_setglobal(L, "append_to_arr");
+
+    lua_pushcfunction(L, lua_dict_arr_remove);
+    lua_setglobal(L, "remove_from_arr");
 
     lua_pushcfunction(L, lua_redirect);
     lua_setglobal(L, "redirect");

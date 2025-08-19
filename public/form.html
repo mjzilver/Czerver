@@ -2,13 +2,13 @@
 
 <form action="/submit.lua" method="POST">
     <label for="item_one">First list item:</label>
-    <input type="text" id="item_one" name="item_one"><br><br>
+    <input type="text" id="item_one" name="item_one" value="{{ item_one }}"><br><br>
 
     <label for="item_two">Second list item:</label>
-    <input type="text" id="item_two" name="item_two"><br><br>
+    <input type="text" id="item_two" name="item_two" value="{{ item_two }}"><br><br>
 
     <label for="item_three">Third list item:</label>
-    <input type="text" id="item_three" name="item_three"><br><br>
+    <input type="text" id="item_three" name="item_three" value="{{ item_three }}"><br><br>
 
     <input type="submit" value="Send">
 </form>

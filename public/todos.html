@@ -1,0 +1,19 @@
+% ./public/nav.html %
+
+<h1>Todo list</h1>
+<ul>
+    #for todo in todos
+        <li>{{ todo }}</li>
+        <form action="/remove_todo.lua" method="POST">
+            <input type="hidden" name="todo" value="{{ todo }}">
+            <button type="submit">Delete</button>
+        </form>
+    #endfor
+</ul>
+
+<form action="/add_todo.lua" method="POST">
+    <label for="new_todo">Add todo:</label>
+    <input type="text" id="new_todo" name="new_todo"><br><br>
+
+    <input type="submit" value="Add todo">
+</form>

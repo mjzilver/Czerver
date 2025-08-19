@@ -14,10 +14,13 @@ int main(int argc, char const *argv[]) {
     }
     var_dict = dict_new(10);
 
-    dict_set(var_dict, "site_title", "CZerver - Example site");
+    dict_set(var_dict, "site_title", "CZerver");
     dict_set(var_dict, "item_one", "First item");
     dict_set(var_dict, "item_two", "Second item");
     dict_set(var_dict, "item_three", "Third item");
+    const char *todos[] = {"Clean room", "Get groceries", "Walk dog", "Mow grass"};
+
+    dict_set_arr(var_dict, "todos", (void **)todos, 4);
 
     register_folder("GET", "/", "./public");
     register_folder("POST", "/", "./post");
