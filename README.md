@@ -74,3 +74,46 @@ This allows **nested templates**:
 * `nav.html` fills `_content_` with navigation and uses base as parent
 * `base.html` provides the global structure
 
+## Handling POST Requests with Lua
+
+You can handle POST requests and update variables globally using Lua.
+
+### `./public/form.html`
+
+```html
+% ./public/nav.html %
+
+<form action="/submit.lua" method="POST">
+    <label for="item_one">First list item:</label>
+    <input type="text" id="item_one" name="item_one"><br><br>
+
+    <label for="item_two">Second list item:</label>
+    <input type="text" id="item_two" name="item_two"><br><br>
+
+    <label for="item_three">Third list item:</label>
+    <input type="text" id="item_three" name="item_three"><br><br>
+
+    <input type="submit" value="Send">
+</form>
+```
+
+### `./post/submit.lua`
+
+
+```lua
+local item_one = item_one or "NULL"
+local item_two = item_two or "NULL"
+local item_three = item_three or "NULL"
+
+dict_replace("item_one", item_one)
+dict_replace("item_two", item_two)
+dict_replace("item_three", item_three)
+
+return redirect("/list.html")
+```
+
+### Explanation:
+
+- Lua receives form data automatically as global variables.
+- `dict_replace(key, value)` updates the global variable dictionary.
+- `redirect(url)` sends the user to a new page after the POST.
