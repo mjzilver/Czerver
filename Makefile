@@ -38,8 +38,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 
 # ---------------- Test Build ----------------
 test: $(OBJ_DIR) $(OBJ_FILES) $(TEST_OBJ_FILES) $(BIN_DIR)
-	$(CC) -o $(BIN_DIR)/run_tests \
-		$(LIB_OBJS) $(TEST_OBJ_FILES) $(CHECK_LIBS) $(LUA_LIBS)
+	$(CC) -o $(BIN_DIR)/run_tests $(LIB_OBJS) $(TEST_OBJ_FILES) $(CHECK_LIBS) $(LUA_LIBS)
 	$(BIN_DIR)/run_tests
 
 $(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c | $(OBJ_DIR)
