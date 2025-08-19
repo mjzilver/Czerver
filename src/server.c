@@ -99,7 +99,7 @@ static void send_response(int client, const char *body, const char *content_type
 
 static void send_redirect(int client, const char *url) {
     char response[512];
-    snprintf(response, sizeof(response), "HTTP/1.1 302 Found\r\nLocation: %s\r\n\r\n", url);
+    snprintf(response, sizeof(response), "%sLocation: %s\r\n\r\n", HTTP_302, url);
 
 #if DEBUG
     printf("Sending redirect:\n%s\n", response);
