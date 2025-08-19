@@ -48,12 +48,16 @@ void register_folder(const char *method, const char *url_path, const char *file_
 
         if (S_ISDIR(st.st_mode)) {
             char *sub_url_path = join_url_path(url_path, entry->d_name);
+#if DEBUG
             printf("Recursively registering subfolder %s as %s\n", full_path, sub_url_path);
+#endif
             register_folder(method, sub_url_path, full_path);
             free(sub_url_path);
         } else if (S_ISREG(st.st_mode)) {
             char *file_url_path = join_url_path(url_path, entry->d_name);
+#if DEBUG
             printf("Registering file: %s as URL path %s\n", full_path, file_url_path);
+#endif
             register_route(method, file_url_path, full_path);
 
             if (strcmp(entry->d_name, "index.html") == 0) {
@@ -66,7 +70,9 @@ void register_folder(const char *method, const char *url_path, const char *file_
                     snprintf(dir_url_path, len, "%s/", url_path);
                 }
 
+#if DEBUG
                 printf("Registering index for %s\n", dir_url_path);
+#endif
                 register_route(method, dir_url_path, full_path);
                 free(dir_url_path);
             }

@@ -2,7 +2,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-extern Dict *var_dict;
+#define DEBUG 0
 
+extern Dict *var_dict;
 
 #endif

@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "globals.h"
 #include "route.h"
 #include "server.h"
-#include "globals.h"
 
 int main(int argc, char const *argv[]) {
     int desired_port = 8080;

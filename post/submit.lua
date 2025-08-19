@@ -1,14 +1,9 @@
-local name = name or "NULL"
-local age = age or "NULL"
+local item_one = item_one or "NULL"
+local item_two = item_two or "NULL"
+local item_three = item_three or "NULL"
 
-dict_replace("item_one", name)
+dict_replace("item_one", item_one)
+dict_replace("item_two", item_two)
+dict_replace("item_three", item_three)
 
-return string.format([[
-<!DOCTYPE html>
-<html>
-<body>
-    <h1>Hello %s!</h1>
-    <p>You are %s years old.</p>
-</body>
-</html>
-]], name, age)
+return redirect("/list.html")
