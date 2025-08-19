@@ -31,24 +31,42 @@ static int lua_redirect(lua_State *L) {
     return 1;
 }
 
-// TODO: Add URL string decoder
+void decode_form_string(const char *src, char *dest) {
+    while (*src) {
+        if (*src == '+') {
+            *dest++ = ' ';
+            src++;
+        } else {
+            *dest++ = *src++;
+        }
+    }
+    *dest = '\0';
+}
+
 static void push_post_body_to_lua(lua_State *L, const char *body) {
     if (!body) return;
 
-    char *body_copy = strdup(body);
-    if (!body_copy) return;
+    char *copy = strdup(body);
+    if (!copy) return;
 
-    char *pair = strtok(body_copy, "&");
+    char *pair = strtok(copy, "&");
     while (pair) {
-        char key[64], value[256];
-        if (sscanf(pair, "%63[^=]=%255s", key, value) == 2) {
+        char *eq = strchr(pair, '=');
+        if (eq) {
+            *eq = '\0';
+
+            char key[128], value[512];
+            decode_form_string(pair, key);
+            decode_form_string(eq + 1, value);
+
             lua_pushstring(L, value);
             lua_setglobal(L, key);
         }
+
         pair = strtok(NULL, "&");
     }
 
-    free(body_copy);
+    free(copy);
 }
 
 char *execute_lua(const char *lua_file, const char *post_body) {
@@ -64,7 +82,7 @@ char *execute_lua(const char *lua_file, const char *post_body) {
     }
 
     lua_pushcfunction(L, lua_dict_replace);
-    lua_setglobal(L, "dict_replace");
+    lua_setglobal(L, "set_var");
 
     lua_pushcfunction(L, lua_redirect);
     lua_setglobal(L, "redirect");

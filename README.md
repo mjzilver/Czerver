@@ -1,7 +1,6 @@
 # Czerver
 
 **Czerver** is a simple HTTP server written in C.
-It supports **static files**, **HTML templates** and **variable injection**.
 
 Tested on **macOS** and **Linux** (UNIX only).
 
@@ -101,13 +100,17 @@ You can handle POST requests and update variables globally using Lua.
 
 
 ```lua
-local item_one = item_one or "NULL"
-local item_two = item_two or "NULL"
-local item_three = item_three or "NULL"
+if item_one ~= "" then
+    set_var("item_one", item_one)
+end
 
-dict_replace("item_one", item_one)
-dict_replace("item_two", item_two)
-dict_replace("item_three", item_three)
+if item_two ~= "" then
+    set_var("item_two", item_two)
+end
+
+if item_three ~= "" then
+    set_var("item_three", item_three)
+end
 
 return redirect("/list.html")
 ```
@@ -115,5 +118,5 @@ return redirect("/list.html")
 ### Explanation:
 
 - Lua receives form data automatically as global variables.
-- `dict_replace(key, value)` updates the global variable dictionary.
+- `set_var(key, value)` updates the global variable dictionary.
 - `redirect(url)` sends the user to a new page after the POST.
