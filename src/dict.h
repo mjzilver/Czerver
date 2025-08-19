@@ -25,7 +25,7 @@ typedef struct Dict {
     int capacity;
 } Dict;
 
-typedef void (*DictCallback)(const char *key, void *value);
+typedef void (*DictCallback)(const char *key, void *value, void *user_context);
 
 Dict *dict_new(int initial_capacity);
 void dict_free_all(Dict *d);
@@ -34,7 +34,7 @@ void dict_print(Dict *d);
 void dict_set(Dict *d, const char *key, void *value);
 void *dict_get(Dict *d, const char *key);
 void dict_remove(Dict *d, const char *key);
-void dict_iterate(Dict *d, DictCallback cb);
+void dict_iterate(Dict *d, DictCallback cb, void *user_context);
 
 void bucket_set(Dict_bucket *buck, const char *key, void *value);
 void *bucket_get(Dict_bucket *buck, const char *key);

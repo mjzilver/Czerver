@@ -5,8 +5,7 @@
 
 #include "route.h"
 #include "server.h"
-
-Dict *var_dict = NULL;
+#include "globals.h"
 
 int main(int argc, char const *argv[]) {
     int desired_port = 8080;
@@ -21,6 +20,7 @@ int main(int argc, char const *argv[]) {
     dict_set(var_dict, "item_three", "Third item");
 
     register_folder("GET", "/", "./public");
+    register_folder("POST", "/", "./post");
 
     pthread_t thread_id;
     int success_flag = 0;

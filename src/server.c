@@ -8,7 +8,11 @@
 #include <unistd.h>
 
 #include "http_codes.h"
+#include "lua.h"
 #include "route.h"
+#include "globals.h"
+
+extern Dict *var_dict;
 
 struct sockaddr_in addr;
 
@@ -82,7 +86,7 @@ void serve_routes(int client) {
     if (bytes_received > 0) {
         buffer[bytes_received] = '\0';
 
-        printf("Received:\n%s\n", buffer);
+        // printf("Received:\n%s\n", buffer);
 
         if (strstr(buffer, "GET") != NULL) {
             char path[256];
@@ -114,9 +118,39 @@ void serve_routes(int client) {
 
                 send(client, response, strlen(response), 0);
 
-                printf("Response:\n%s\n", response);
+                dict_print(var_dict);
 
                 free(file_content);
+
+                return;
+            }
+
+            send_404(path, client);
+        } else if (strstr(buffer, "POST") != NULL) {
+            char path[256];
+            sscanf(buffer, "POST %s HTTP/1.1", path);
+
+            Route *route = DICT_GET_AS(Route, routes_dict, path);
+
+            if (route != NULL) {
+                if (strcmp(route->method, "POST") != 0) {
+                    send_404(path, client);
+                    return;
+                }
+
+                char *body = strstr(buffer, "\r\n\r\n");
+                if (body) body += 4;
+
+                char *response_body = execute_lua(route->cached_file, body);
+
+                char response[2048] = {0};
+                strcat(response, HTTP_200);
+                strcat(response, "Content-Type: text/html\n\n");
+                strcat(response, response_body);
+
+                send(client, response, strlen(response), 0);
+
+                free(response_body);
 
                 return;
             }

@@ -49,6 +49,8 @@ unsigned int hash(const char *str) {
 int get_index(int hashed_key, int capacity) { return (hashed_key % capacity + capacity) % capacity; }
 
 void dict_set(Dict *d, const char *key, void *value) {
+    dict_remove(d, key);
+
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
     bucket_set(&d->buckets[idx], key, value);
@@ -68,11 +70,11 @@ void dict_remove(Dict *d, const char *key) {
     bucket_remove(&d->buckets[idx], key);
 }
 
-void dict_iterate(Dict *d, DictCallback cb) {
+void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
     for (int i = 0; i < d->capacity; i++) {
         Dict_bucket *b = &d->buckets[i];
         for (int j = 0; j < b->size; j++) {
-            cb(b->items[j].key, b->items[j].value);
+            cb(b->items[j].key, b->items[j].value, user_context);
         }
     }
 }
