@@ -7,22 +7,23 @@
 #define INITIAL_DICT_CAPACITY 10
 #define RESIZE_BUCKET 15
 
-// Macro to get a value from a dictionary as a specific type
 #define DICT_GET_AS(type, dict, key) ((type *)dict_get(dict, key))
 
-typedef struct Dict_item {
+typedef struct Dict Dict;
+
+typedef struct DictItem {
     char *key;
     void *value;
-} Dict_item;
+} DictItem;
 
-typedef struct Dict_bucket {
-    Dict_item *items;
+typedef struct DictBucket {
+    DictItem *items;
     int size;
     int capacity;
-} Dict_bucket;
+} DictBucket;
 
 typedef struct Dict {
-    Dict_bucket *buckets;
+    DictBucket *buckets;
     int size;
     int capacity;
 } Dict;
@@ -38,8 +39,8 @@ void *dict_get(Dict *d, const char *key);
 void dict_remove(Dict *d, const char *key);
 void dict_iterate(Dict *d, DictCallback cb, void *user_context);
 
-void bucket_set(Dict_bucket *buck, const char *key, void *value);
-void *bucket_get(Dict_bucket *buck, const char *key);
-void bucket_remove(Dict_bucket *buck, const char *key);
+void bucket_set(DictBucket *buck, const char *key, void *value);
+void *bucket_get(DictBucket *buck, const char *key);
+void bucket_remove(DictBucket *buck, const char *key);
 
 #endif

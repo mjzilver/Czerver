@@ -11,13 +11,13 @@ Dict *dict_new(int initial_capacity) {
 
     d->size = 0;
     d->capacity = initial_capacity;
-    d->buckets = malloc(sizeof(Dict_bucket) * initial_capacity);
+    d->buckets = malloc(sizeof(DictBucket) * initial_capacity);
     assert(d->buckets != NULL);
 
     for (int i = 0; i < initial_capacity; i++) {
         d->buckets[i].size = 0;
         d->buckets[i].capacity = INITIAL_BUCKET_CAPACITY;
-        d->buckets[i].items = malloc(sizeof(Dict_item) * INITIAL_BUCKET_CAPACITY);
+        d->buckets[i].items = malloc(sizeof(DictItem) * INITIAL_BUCKET_CAPACITY);
         assert(d->buckets[i].items != NULL);
     }
     return d;
@@ -72,22 +72,22 @@ void dict_remove(Dict *d, const char *key) {
 
 void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
     for (int i = 0; i < d->capacity; i++) {
-        Dict_bucket *b = &d->buckets[i];
+        DictBucket *b = &d->buckets[i];
         for (int j = 0; j < b->size; j++) {
             cb(b->items[j].key, b->items[j].value, user_context);
         }
     }
 }
 
-void bucket_set(Dict_bucket *b, const char *key, void *value) {
-    Dict_item di;
+void bucket_set(DictBucket *b, const char *key, void *value) {
+    DictItem di;
     di.key = strdup(key);
     di.value = value;
     assert(di.key != NULL);
 
     if (b->size >= b->capacity) {
         b->capacity *= 2;
-        b->items = realloc(b->items, sizeof(Dict_item) * b->capacity);
+        b->items = realloc(b->items, sizeof(DictItem) * b->capacity);
         assert(b->items != NULL);
     }
 
@@ -95,7 +95,7 @@ void bucket_set(Dict_bucket *b, const char *key, void *value) {
     b->size++;
 }
 
-void *bucket_get(Dict_bucket *b, const char *key) {
+void *bucket_get(DictBucket *b, const char *key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             return b->items[i].value;
@@ -104,7 +104,7 @@ void *bucket_get(Dict_bucket *b, const char *key) {
     return NULL;
 }
 
-void bucket_remove(Dict_bucket *b, const char *key) {
+void bucket_remove(DictBucket *b, const char *key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             free(b->items[i].key);
