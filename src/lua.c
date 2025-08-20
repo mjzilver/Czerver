@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "arr_list.h"
 #include "dict.h"
 #include "globals.h"
-#include "arr_list.h"
 
 extern Dict *var_dict;
 
@@ -28,8 +28,8 @@ static int lua_dict_arr_append(lua_State *L) {
     const char *list_name = luaL_checkstring(L, 1);
     const char *value = luaL_checkstring(L, 2);
 
-    ArrayList* l = DICT_GET_AS(ArrayList, var_dict, list_name);
-    arraylist_append(l, strdup(value), true);
+    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
+    arraylist_append(list, strdup(value), true);
 
     return 0;
 }
@@ -38,8 +38,8 @@ static int lua_dict_arr_remove(lua_State *L) {
     const char *list_name = luaL_checkstring(L, 1);
     const char *value = luaL_checkstring(L, 2);
 
-    ArrayList* l = DICT_GET_AS(ArrayList, var_dict, list_name);
-    arraylist_remove(l, (void *)value, str_cmp);
+    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
+    arraylist_remove(list, (void *)value, str_cmp);
     return 0;
 }
 

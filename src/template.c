@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "arr_list.h"
 #include "buff.h"
 #include "file.h"
 #include "globals.h"
 #include "utils.h"
-#include "arr_list.h"
 
 const char *VAR_DELIM_START = "{{";
 const char *VAR_DELIM_END = "}}";

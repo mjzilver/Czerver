@@ -1,8 +1,8 @@
 #ifndef ARRAYLIST_H
 #define ARRAYLIST_H
 
-#include <stddef.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
 
 typedef struct ArrayItem {

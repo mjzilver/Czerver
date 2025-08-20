@@ -1,8 +1,8 @@
+#include "arr_list.h"
+
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "arr_list.h"
 
 ArrayList *arraylist_new(size_t initial_capacity) {
     ArrayList *list = malloc(sizeof(ArrayList));
@@ -66,6 +66,4 @@ void *arraylist_get(ArrayList *list, size_t index) {
     return list->items[index].value;
 }
 
-int str_cmp(const void *a, const void *b) {
-    return strcmp((const char *)a, (const char *)b);
-}
+int str_cmp(const void *a, const void *b) { return strcmp((const char *)a, (const char *)b); }

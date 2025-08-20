@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "arr_list.h"
 #include "globals.h"
 #include "route.h"
 #include "server.h"
-#include "arr_list.h"
 
 int main(int argc, char const *argv[]) {
     int desired_port = 8080;
