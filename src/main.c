@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "route.h"
 #include "server.h"
+#include "arr_list.h"
 
 int main(int argc, char const *argv[]) {
     int desired_port = 8080;
@@ -18,9 +19,14 @@ int main(int argc, char const *argv[]) {
     dict_set(var_dict, "item_one", "First item");
     dict_set(var_dict, "item_two", "Second item");
     dict_set(var_dict, "item_three", "Third item");
-    const char *todos[] = {"Clean room", "Get groceries", "Walk dog", "Mow grass"};
 
-    dict_set_arr(var_dict, "todos", (void **)todos, 4);
+    ArrayList *list = arraylist_new(4);
+    arraylist_append(list, strdup("Clean room"), true);
+    arraylist_append(list, strdup("Get groceries"), true);
+    arraylist_append(list, strdup("Walk dog"), true);
+    arraylist_append(list, strdup("Mow grass"), true);
+
+    dict_set(var_dict, "todos", list);
 
     register_folder("GET", "/", "./public");
     register_folder("POST", "/", "./post");

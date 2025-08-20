@@ -9,6 +9,7 @@
 #include "file.h"
 #include "globals.h"
 #include "utils.h"
+#include "arr_list.h"
 
 const char *VAR_DELIM_START = "{{";
 const char *VAR_DELIM_END = "}}";
@@ -97,7 +98,7 @@ Buffer *parse_loops(const char *template_content) {
         size_t body_len = loop_end - body_start;
         char *body = strndup(body_start, body_len);
 
-        ArrayList *list = dict_get_arr(var_dict, list_name);
+        ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
         if (!list) {
             fprintf(stderr, "List not found: %s\n", list_name);
             free(body);
@@ -105,7 +106,7 @@ Buffer *parse_loops(const char *template_content) {
         }
 
         for (size_t i = 0; i < list->len; i++) {
-            dict_set(var_dict, var_name, list->values[i]);
+            dict_set(var_dict, var_name, list->items[i].value);
 
             Buffer *expanded = parse_variables(body);
             buffer_append(processed_content, expanded->data, expanded->length);

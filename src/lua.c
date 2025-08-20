@@ -6,6 +6,7 @@
 
 #include "dict.h"
 #include "globals.h"
+#include "arr_list.h"
 
 extern Dict *var_dict;
 
@@ -27,22 +28,18 @@ static int lua_dict_arr_append(lua_State *L) {
     const char *list_name = luaL_checkstring(L, 1);
     const char *value = luaL_checkstring(L, 2);
 
-    const char *items[] = {strdup(value)};
+    ArrayList* l = DICT_GET_AS(ArrayList, var_dict, list_name);
+    arraylist_append(l, strdup(value), true);
 
-    dict_append_arr(var_dict, list_name, (void **)items, 1);
     return 0;
-}
-
-int str_cmp(const void *a, const void *b) {
-    return strcmp((const char *)a, (const char *)b);
 }
 
 static int lua_dict_arr_remove(lua_State *L) {
     const char *list_name = luaL_checkstring(L, 1);
     const char *value = luaL_checkstring(L, 2);
 
-
-    dict_remove_arr(var_dict, list_name, (void *)value, str_cmp);
+    ArrayList* l = DICT_GET_AS(ArrayList, var_dict, list_name);
+    arraylist_remove(l, (void *)value, str_cmp);
     return 0;
 }
 

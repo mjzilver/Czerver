@@ -27,11 +27,6 @@ typedef struct Dict {
     int capacity;
 } Dict;
 
-typedef struct ArrayList {
-    void **values;
-    size_t len;
-} ArrayList;
-
 typedef void (*DictCallback)(const char *key, void *value, void *user_context);
 
 Dict *dict_new(int initial_capacity);
@@ -42,13 +37,6 @@ void dict_set(Dict *d, const char *key, void *value);
 void *dict_get(Dict *d, const char *key);
 void dict_remove(Dict *d, const char *key);
 void dict_iterate(Dict *d, DictCallback cb, void *user_context);
-
-ArrayList *dict_set_arr(Dict *d, const char *key, void **values, size_t len);
-ArrayList *dict_get_arr(Dict *d, const char *key);
-ArrayList *dict_append_arr(Dict *d, const char *key, void **values, size_t len);
-
-typedef int (*CompareFunc)(const void *a, const void *b);
-ArrayList *dict_remove_arr(Dict *d, const char *key, void *value_to_remove, CompareFunc cmp);
 
 void bucket_set(Dict_bucket *buck, const char *key, void *value);
 void *bucket_get(Dict_bucket *buck, const char *key);
