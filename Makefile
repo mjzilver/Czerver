@@ -15,12 +15,13 @@ CC = gcc
 CFLAGS = -Wall -g -I$(SRC_DIR)
 PKG_CONFIG = pkg-config
 LUA_PKG = lua
+CHECK_PKG = check
 
 LUA_CFLAGS = $(shell $(PKG_CONFIG) --cflags $(LUA_PKG))
 LUA_LIBS   = $(shell $(PKG_CONFIG) --libs $(LUA_PKG))
 
-CHECK_CFLAGS = $(shell pkg-config --cflags check)
-CHECK_LIBS   = $(shell pkg-config --libs check)
+CHECK_CFLAGS = $(shell $(PKG_CONFIG)--cflags $(CHECK_PKG))
+CHECK_LIBS   = $(shell $(PKG_CONFIG) --libs $(CHECK_PKG))
 
 .PHONY: all build run valgrind leaks clean format test
 
