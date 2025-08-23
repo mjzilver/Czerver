@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-Dict *dict_new(int initial_capacity) {
+Dict *dict_new(size_t initial_capacity) {
     Dict *d = malloc(sizeof(Dict));
     assert(d != NULL);
 
@@ -46,7 +46,7 @@ unsigned int hash(const char *str) {
     return hash;
 }
 
-int get_index(int hashed_key, int capacity) { return (hashed_key % capacity + capacity) % capacity; }
+int get_index(int hashed_key, size_t capacity) { return (hashed_key % capacity + capacity) % capacity; }
 
 void dict_set(Dict *d, const char *key, void *value) {
     dict_remove(d, key);
@@ -126,7 +126,7 @@ void bucket_remove(DictBucket *b, const char *key) {
 void dict_print(Dict *d) {
     printf("==== Dict Start ====\n");
     for (int i = 0; i < d->capacity; i++) {
-        printf("Bucket %d (size=%d): ", i, d->buckets[i].size);
+        printf("Bucket %d (size=%zu): ", i, d->buckets[i].size);
         for (int j = 0; j < d->buckets[i].size; j++) {
             printf("(%s=%p) ", d->buckets[i].items[j].key, d->buckets[i].items[j].value);
         }

@@ -18,19 +18,19 @@ typedef struct DictItem {
 
 typedef struct DictBucket {
     DictItem *items;
-    int size;
-    int capacity;
+    size_t size;
+    size_t capacity;
 } DictBucket;
 
 typedef struct Dict {
     DictBucket *buckets;
-    int size;
-    int capacity;
+    size_t size;
+    size_t capacity;
 } Dict;
 
 typedef void (*DictCallback)(const char *key, void *value, void *user_context);
 
-Dict *dict_new(int initial_capacity);
+Dict *dict_new(size_t initial_capacity);
 void dict_free_all(Dict *d);
 void dict_print(Dict *d);
 
