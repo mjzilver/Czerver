@@ -5,9 +5,6 @@
 #include <string.h>
 #include <sys/socket.h>
 
-#include "http_codes.h"
-#include "route.h"
-
 char *read_file(const char *path) {
     FILE *file = fopen(path, "r");
     if (file == NULL) {

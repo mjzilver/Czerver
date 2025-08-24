@@ -20,10 +20,10 @@ CHECK_PKG = check
 LUA_CFLAGS = $(shell $(PKG_CONFIG) --cflags $(LUA_PKG))
 LUA_LIBS   = $(shell $(PKG_CONFIG) --libs $(LUA_PKG))
 
-CHECK_CFLAGS = $(shell $(PKG_CONFIG)--cflags $(CHECK_PKG))
+CHECK_CFLAGS = $(shell $(PKG_CONFIG) --cflags $(CHECK_PKG))
 CHECK_LIBS   = $(shell $(PKG_CONFIG) --libs $(CHECK_PKG))
 
-.PHONY: all build run valgrind leaks clean format test
+.PHONY: all build run valgrind leaks clean format test tidy
 
 all: build run
 
@@ -65,3 +65,6 @@ clean:
 
 format:
 	clang-format -i $(SRC_FILES) $(HEAD_FILES)
+
+tidy: 
+	clang-tidy $(SRC_FILES) $(HEAD_FILES) -- $(CFLAGS) $(LUA_CFLAGS) $(CHECK_CFLAGS)
