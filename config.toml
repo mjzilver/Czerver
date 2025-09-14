@@ -1,0 +1,5 @@
+[server]
+port = 8080
+get_dir = "./public"
+post_dir = "./post"
+site_title = "Czerver"
