@@ -1,8 +1,6 @@
 #include "utils.h"
 
 #include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 void trim_whitespace(char *str) {

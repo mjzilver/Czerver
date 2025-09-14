@@ -12,7 +12,7 @@ TEST_FILES = $(wildcard $(TEST_DIR)/*.c)
 TEST_OBJ_FILES = $(TEST_FILES:$(TEST_DIR)/%.c=$(OBJ_DIR)/%.test.o)
 
 CC = gcc
-CFLAGS = -Wall -g -std=c11 -I$(SRC_DIR)
+CFLAGS = -Wall -g -std=gnu11 -I$(SRC_DIR)
 PKG_CONFIG = pkg-config
 LUA_PKG = lua
 CHECK_PKG = check

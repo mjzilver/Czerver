@@ -1,6 +1,5 @@
 #include <check.h>
 #include "../src/arr_list.h"
-#include <string.h>
 #include <stdlib.h>
 
 START_TEST(test_append_and_get) {
