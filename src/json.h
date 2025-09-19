@@ -7,12 +7,12 @@
 #include "dict.h"
 
 typedef enum {
-    JSON_STRING,  // "String"
-    JSON_NUMBER,  // 123, 123.45
-    JSON_BOOLEAN, // True, False
-    JSON_ARRAY,   // []
-    JSON_OBJECT,  // {}
-    JSON_NULL     // NULL
+    JSON_STRING,   // "String"
+    JSON_NUMBER,   // 123, 123.45
+    JSON_BOOLEAN,  // True, False
+    JSON_ARRAY,    // []
+    JSON_OBJECT,   // {}
+    JSON_NULL      // NULL
 } json_type;
 
 struct json_object;

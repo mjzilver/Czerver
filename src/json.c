@@ -68,7 +68,6 @@ json_token* parse_json_string(const char* json_string, size_t* i, const char QUO
     return NULL;
 }
 
-
 json_token* parse_json_number(const char* json_string, size_t* i) {
     json_token* tok = malloc(sizeof(json_token));
     tok->type = NUMBER;
@@ -341,17 +340,27 @@ json_object* json_decode(const char* json_string) {
     return obj;
 }
 
-void buffer_append_escaped_string(Buffer *buf, const char *str) {
+void buffer_append_escaped_string(Buffer* buf, const char* str) {
     buffer_append(buf, "\"", 1);
 
     for (size_t i = 0; str[i]; i++) {
         char c = str[i];
         switch (c) {
-            case '"': buffer_append(buf, "\\\"", 2); break;
-            case '\\': buffer_append(buf, "\\\\", 2); break;
-            case '\n': buffer_append(buf, "\\n", 2); break;
-            case '\r': buffer_append(buf, "\\r", 2); break;
-            case '\t': buffer_append(buf, "\\t", 2); break;
+            case '"':
+                buffer_append(buf, "\\\"", 2);
+                break;
+            case '\\':
+                buffer_append(buf, "\\\\", 2);
+                break;
+            case '\n':
+                buffer_append(buf, "\\n", 2);
+                break;
+            case '\r':
+                buffer_append(buf, "\\r", 2);
+                break;
+            case '\t':
+                buffer_append(buf, "\\t", 2);
+                break;
             default:
                 buffer_append(buf, &c, 1);
                 break;
@@ -364,19 +373,19 @@ void buffer_append_escaped_string(Buffer *buf, const char *str) {
 // Forward declare
 void json_encode_to_buffer(const json_object* obj, Buffer* buf);
 
-void json_dict_iterate(const char *key, void *value, void *user_context){
-    Buffer *buf = (Buffer *)user_context;
+void json_dict_iterate(const char* key, void* value, void* user_context) {
+    Buffer* buf = (Buffer*)user_context;
     buffer_append_escaped_string(buf, key);
     buffer_append(buf, ":", 1);
     json_object* json_value_obj = (json_object*)value;
     json_encode_to_buffer(json_value_obj, buf);
-    buffer_append(buf, ",", 1); 
+    buffer_append(buf, ",", 1);
 }
 
-void json_array_list_iterate(ArrayItem *item, size_t index, void *user_context) {
+void json_array_list_iterate(ArrayItem* item, size_t index, void* user_context) {
     (void)index;
-    Buffer *buf = (Buffer *)user_context;
-    json_object *elem = (json_object *)item->value;
+    Buffer* buf = (Buffer*)user_context;
+    json_object* elem = (json_object*)item->value;
     json_encode_to_buffer(elem, buf);
     buffer_append(buf, ",", 1);
 }
@@ -387,7 +396,7 @@ void json_encode_to_buffer(const json_object* obj, Buffer* buf) {
         return;
     }
 
-      switch (obj->type) {
+    switch (obj->type) {
         case JSON_NULL:
             buffer_append(buf, "null", 4);
             break;
@@ -396,9 +405,8 @@ void json_encode_to_buffer(const json_object* obj, Buffer* buf) {
             if (obj->value.boolean) {
                 buffer_append(buf, "true", 4);
             } else {
-               buffer_append(buf, "false", 5);
+                buffer_append(buf, "false", 5);
             }
-        
 
         case JSON_NUMBER: {
             char tmp[64];
@@ -414,16 +422,16 @@ void json_encode_to_buffer(const json_object* obj, Buffer* buf) {
         case JSON_ARRAY:
             buffer_append(buf, "[", 1);
             arraylist_iterate(obj->value.array, json_array_list_iterate, buf);
-            buffer_remove(buf, 1); // Remove trailing comma
+            buffer_remove(buf, 1);  // Remove trailing comma
             buffer_append(buf, "]", 1);
             break;
         case JSON_OBJECT:
             buffer_append(buf, "{", 1);
             dict_iterate(obj->value.object, json_dict_iterate, buf);
-            buffer_remove(buf, 1); // Remove trailing comma
+            buffer_remove(buf, 1);  // Remove trailing comma
             buffer_append(buf, "}", 1);
             break;
-      }
+    }
 }
 
 char* json_encode(const json_object* obj) {
