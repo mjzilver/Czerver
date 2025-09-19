@@ -36,37 +36,62 @@ START_TEST(test_encode_null) {
 END_TEST
 
 START_TEST(test_encode_array) {
-    json_object a = {.type = JSON_NUMBER, .value.number = 1};
-    json_object b = {.type = JSON_NUMBER, .value.number = 2};
-    json_object c = {.type = JSON_NUMBER, .value.number = 3};
+    json_object *a = malloc(sizeof(json_object));
+    a->type = JSON_NUMBER;
+    a->value.number = 1;
 
-    json_object *items[] = {&a, &b, &c};
-    json_object obj = {.type = JSON_ARRAY, .value.array.items = items, .value.array.length = 3};
+    json_object *b = malloc(sizeof(json_object));
+    b->type = JSON_NUMBER;
+    b->value.number = 2;
+
+    json_object *c = malloc(sizeof(json_object));
+    c->type = JSON_NUMBER;
+    c->value.number = 3;
+
+    ArrayList *arr = arraylist_new(3);
+    arraylist_append(arr, a, true);
+    arraylist_append(arr, b, true);
+    arraylist_append(arr, c, true);
+
+    json_object obj;
+    obj.type = JSON_ARRAY;
+    obj.value.array = arr;
 
     char *encoded = json_encode(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "[1,2,3]");
 
     free(encoded);
+    json_free(&obj);
 }
 END_TEST
 
 START_TEST(test_encode_object) {
-    json_object a = {.type = JSON_NUMBER, .value.number = 1};
-    json_object b = {.type = JSON_NUMBER, .value.number = 2};
+    json_object *a = malloc(sizeof(json_object));
+    a->type = JSON_NUMBER;
+    a->value.number = 1;
 
-    char *keys[] = {"a", "b"};
-    json_object *values[] = {&a, &b};
+    json_object *b = malloc(sizeof(json_object));
+    b->type = JSON_NUMBER;
+    b->value.number = 2;
 
-    json_object obj = {.type = JSON_OBJECT, .value.object.keys = keys, .value.object.values = values, .value.object.length = 2};
+    Dict *dict = dict_new(2);
+    dict_set(dict, "a", a);
+    dict_set(dict, "b", b);
+
+    json_object obj;
+    obj.type = JSON_OBJECT;
+    obj.value.object = dict;
 
     char *encoded = json_encode(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "{\"a\":1,\"b\":2}");
 
     free(encoded);
+    json_free(&obj);
 }
 END_TEST
+
 
 Suite *json_encode_suite(void) {
     Suite *s = suite_create("JSON Encode");

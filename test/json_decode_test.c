@@ -42,11 +42,19 @@ START_TEST(test_decode_array) {
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_ARRAY);
-    ck_assert_int_eq(obj->value.array.length, 3);
 
-    ck_assert_double_eq_tol(obj->value.array.items[0]->value.number, 1.0, 1e-9);
-    ck_assert_double_eq_tol(obj->value.array.items[1]->value.number, 2.0, 1e-9);
-    ck_assert_double_eq_tol(obj->value.array.items[2]->value.number, 3.0, 1e-9);
+    ArrayList *arr = obj->value.array;
+    ck_assert_int_eq(arr->len, 3);
+
+    for (size_t i = 0; i < arr->len; i++) {
+        ArrayItem *item = arraylist_get(arr, i);
+        ck_assert_ptr_nonnull(item);
+        ck_assert_ptr_nonnull(item->value);
+
+        json_object *elem = (json_object *)arraylist_get(arr, i);
+        ck_assert_int_eq(elem->type, JSON_NUMBER);
+        ck_assert_double_eq_tol(elem->value.number, (double)(i + 1), 1e-9);
+    }
 
     json_free(obj);
 }
@@ -58,13 +66,16 @@ START_TEST(test_decode_object) {
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_OBJECT);
-    ck_assert_int_eq(obj->value.object.length, 2);
 
-    ck_assert_str_eq(obj->value.object.keys[0], "a");
-    ck_assert_double_eq_tol(obj->value.object.values[0]->value.number, 1.0, 1e-9);
+    json_object *val_a = (json_object *)dict_get(obj->value.object, "a");
+    ck_assert_ptr_nonnull(val_a);
+    ck_assert_int_eq(val_a->type, JSON_NUMBER);
+    ck_assert_double_eq_tol(val_a->value.number, 1.0, 1e-9);
 
-    ck_assert_str_eq(obj->value.object.keys[1], "b");
-    ck_assert_double_eq_tol(obj->value.object.values[1]->value.number, 2.0, 1e-9);
+    json_object *val_b = (json_object *)dict_get(obj->value.object, "b");
+    ck_assert_ptr_nonnull(val_b);
+    ck_assert_int_eq(val_b->type, JSON_NUMBER);
+    ck_assert_double_eq_tol(val_b->value.number, 2.0, 1e-9);
 
     json_free(obj);
 }

@@ -32,6 +32,15 @@ void buffer_append(Buffer *buf, const char *content, size_t length) {
     buf->data[buf->length] = '\0';
 }
 
+void buffer_remove(Buffer *buf, size_t n) {
+    if (n >= buf->length) {
+        buf->length = 0;
+    } else {
+        buf->length -= n;
+    }
+    buf->data[buf->length] = '\0';
+}
+
 void buffer_free(Buffer *buf) {
     if (!buf) return;
     free(buf->data);

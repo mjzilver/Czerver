@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 void count_callback(const char *key, void *value, void *user_context) {
+    (void)key;
+    (void)value;
     int *count = (int *)user_context;
     (*count)++;
 }
