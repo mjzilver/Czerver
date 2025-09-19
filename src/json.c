@@ -68,30 +68,24 @@ json_token* parse_json_string(const char* json_string, size_t* i, const char QUO
     return NULL;
 }
 
+
 json_token* parse_json_number(const char* json_string, size_t* i) {
     json_token* tok = malloc(sizeof(json_token));
     tok->type = NUMBER;
 
-    size_t len = strlen(json_string);
-    size_t start = *i;
+    const char* start_ptr = json_string + *i;
+    char* end_ptr;
 
-    while (*i < len) {
-        char c = json_string[*i];
-        if (c >= '0' && c <= '9') {
-            (*i)++;
-        } else {
-            // TODO: handle decimals
-            break;
-        }
+    double val = strtod(start_ptr, &end_ptr);
+
+    if (start_ptr == end_ptr) {
+        fprintf(stderr, "Error: Invalid number at position %zu\n", *i);
+        free(tok);
+        return NULL;
     }
 
-    size_t num_len = *i - start;
-    char* num_str = malloc(num_len + 1);
-    strncpy(num_str, json_string + start, num_len);
-    num_str[num_len] = '\0';
-
-    tok->value.number = atof(num_str);
-    free(num_str);
+    tok->value.number = val;
+    *i += (end_ptr - start_ptr);
 
     return tok;
 }
@@ -194,23 +188,30 @@ ArrayList* json_tokenize(const char* json_string) {
 }
 
 json_object* proces_value_type(json_token* tok) {
+    json_object* obj = malloc(sizeof(json_object));
+
     switch (tok->type) {
         case STRING: {
-            json_object* obj = malloc(sizeof(json_object));
             obj->type = JSON_STRING;
             obj->value.string = tok->value.string;
             return obj;
         }
         case NUMBER: {
-            json_object* obj = malloc(sizeof(json_object));
             obj->type = JSON_NUMBER;
             obj->value.number = tok->value.number;
             return obj;
         }
+        case BOOLEAN: {
+            obj->type = JSON_BOOLEAN;
+            obj->value.boolean = tok->value.boolean;
+        }
         default:
-            fprintf(stderr, "Error: value type (string or number)");
+            fprintf(stderr, "Error: invalid value type ");
+            free(obj);
             return NULL;
     }
+
+    return obj;
 }
 
 // forward declare
@@ -314,11 +315,8 @@ json_object* process_tokens(ArrayList* tokens, size_t* i) {
             return process_object_tokens(tokens, i);
         case LEFT_BRACKET:
             return process_array_tokens(tokens, i);
-        case STRING: {
-            json_object* obj = proces_value_type(tok);
-            (*i)++;
-            return obj;
-        }
+        case BOOLEAN:
+        case STRING:
         case NUMBER: {
             json_object* obj = proces_value_type(tok);
             (*i)++;
@@ -394,6 +392,14 @@ void json_encode_to_buffer(const json_object* obj, Buffer* buf) {
             buffer_append(buf, "null", 4);
             break;
 
+        case JSON_BOOLEAN:
+            if (obj->value.boolean) {
+                buffer_append(buf, "true", 4);
+            } else {
+               buffer_append(buf, "false", 5);
+            }
+        
+
         case JSON_NUMBER: {
             char tmp[64];
             int len = snprintf(tmp, sizeof(tmp), "%.17g", obj->value.number);
@@ -429,6 +435,7 @@ char* json_encode(const json_object* obj) {
 
 void json_free(json_object* obj) {
     switch (obj->type) {
+        case JSON_BOOLEAN:
         case JSON_NULL:
         case JSON_NUMBER:
             break;
