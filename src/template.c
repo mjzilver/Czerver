@@ -122,7 +122,7 @@ Buffer *parse_loops(const char *template_content) {
     return processed_content;
 }
 
-Buffer *parse_parent_template(const char *template_content, const char *main_content) {
+Buffer *parse_parent_template(const char *template_content) {
     Buffer *processed_content = buffer_new(strlen(template_content) * 2);
 
     const char *current_pos = template_content;
@@ -166,7 +166,7 @@ Buffer *parse_parent_template(const char *template_content, const char *main_con
 char *process_template(const char *template_content) {
     char *content = strdup(template_content);
     while (strstr(content, PARENT_DELIM_START) != NULL) {
-        Buffer *combined_content = parse_parent_template(content, template_content);
+        Buffer *combined_content = parse_parent_template(content);
         free(content);
         content = buffer_take_data(combined_content);
     }

@@ -28,3 +28,20 @@ char *read_file(const char *path) {
     fclose(file);
     return content;
 }
+
+int create_file(const char *path, const char *content) {
+    FILE *file = fopen(path, "w");
+    if (file == NULL) {
+        printf("Failed to open file for writing: %s\n", path);
+        return 1;
+    }
+
+    int fput_ret = fputs(content, file);
+    if (fput_ret != 0) {
+        fclose(file);
+        return fput_ret;
+    }
+
+    fclose(file);
+    return 0;
+}

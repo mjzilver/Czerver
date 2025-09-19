@@ -118,7 +118,9 @@ void register_route(const char *method, const char *url_path, const char *file_p
     dict_set(routes_dict, url_path, route);
 }
 
-void free_route(const char *key, void *value, void *_) {
+void free_route(const char *key, void *value, void *user_context) {
+    (void)key;
+    (void)user_context;
     Route *route = value;
     if (route->cached_file) free(route->cached_file);
     free(route);
