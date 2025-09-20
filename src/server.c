@@ -13,6 +13,7 @@
 #include "http_codes.h"
 #include "lua.h"
 #include "route.h"
+#include "template.h"
 
 extern Dict *var_dict;
 
@@ -121,12 +122,14 @@ static void send_redirect(int client, const char *url) {
 
 static void handle_static_route_request(int client, const char *buffer, const char *method, Route *route) {
     if (strcmp(method, "GET") == 0) {
-        char *file_content = process_template(route->cached_file);
+        char *file_content = NULL;  
 
         if (route->type == LUA_TYPE) {
-            char *response_body = execute_lua(file_content, NULL);
-            send_response(client, response_body, get_type_header(HTML_TYPE));
+            char *response_body = execute_lua(route->cached_file, NULL);
+            file_content = process_template(response_body);
+            send_response(client, file_content, get_type_header(HTML_TYPE));
         } else {
+            file_content = process_template(route->cached_file);
             char *type_header = get_type_header(route->type);
             send_response(client, file_content, type_header);
         }

@@ -149,6 +149,16 @@ Buffer *parse_parent_template(const char *template_content) {
         const char *placeholder_pos = strstr(included_content, CHILD_CONTENT_MARKER);
         if (placeholder_pos) {
             buffer_append(processed_content, included_content, placeholder_pos - included_content);
+
+            const char *child_start = next_delim_end + strlen(PARENT_DELIM_END);
+            const char *child_end = strstr(child_start, PARENT_DELIM_START);
+            size_t child_len = child_end ? (size_t)(child_end - child_start) : strlen(child_start);
+            buffer_append(processed_content, child_start, child_len);
+
+            const char *after_marker = placeholder_pos + strlen(CHILD_CONTENT_MARKER);
+            buffer_append(processed_content, after_marker, strlen(after_marker));
+
+            current_pos = child_start + child_len;
         } else {
             fprintf(stderr, "Failed to find placeholder in included file: %s\n", key);
             buffer_append(processed_content, included_content, strlen(included_content));
@@ -156,7 +166,6 @@ Buffer *parse_parent_template(const char *template_content) {
 
         free(included_content);
         free(key);
-        current_pos = next_delim_end + strlen(PARENT_DELIM_END);
     }
 
     buffer_append(processed_content, current_pos, strlen(current_pos));
@@ -165,6 +174,7 @@ Buffer *parse_parent_template(const char *template_content) {
 
 char *process_template(const char *template_content) {
     char *content = strdup(template_content);
+
     while (strstr(content, PARENT_DELIM_START) != NULL) {
         Buffer *combined_content = parse_parent_template(content);
         free(content);

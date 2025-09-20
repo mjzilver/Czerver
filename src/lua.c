@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <lauxlib.h>
 #include <lua.h>
 #include <lualib.h>
@@ -94,6 +95,11 @@ void decode_form_string(const char *src, char *dest) {
         if (*src == '+') {
             *dest++ = ' ';
             src++;
+        } else if (*src == '%' && isxdigit(src[1]) && isxdigit(src[2])) {
+            int hex;
+            sscanf(src + 1, "%2x", &hex);
+            *dest++ = (char)hex;
+            src += 3;
         } else {
             *dest++ = *src++;
         }

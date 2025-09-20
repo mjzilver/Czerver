@@ -17,8 +17,6 @@ html = html .. [[
         <input type="text" name="new_message" placeholder="Write your message..." required>
         <input type="submit" value="Submit">
     </form>
-</body>
-</html>
 ]]
 
 
