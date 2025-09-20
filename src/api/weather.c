@@ -1,7 +1,7 @@
 #include "weather.h"
 
-#include "../json.h"
 #include "../arena.h"
+#include "../json.h"
 #include "api_utils.h"
 
 char* weather_api_handler(const char* request_body) {
@@ -80,5 +80,5 @@ char* weather_api_handler(const char* request_body) {
 
     char* encoded = json_encode(resp);
 
-    return encoded; 
+    return encoded;
 }

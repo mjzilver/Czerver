@@ -1,8 +1,9 @@
 #include "arena.h"
+
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 #define ALIGN_UP(x, align) (((x) + (align) - 1) & ~((align) - 1))
 
@@ -47,8 +48,7 @@ void arena_free(Arena* arena) {
 
 char* arena_strdup(Arena* arena, const char* str) {
     size_t n = strlen(str) + 1;
-    char *p = arena_alloc(arena, n);
+    char* p = arena_alloc(arena, n);
     if (p) memcpy(p, str, n);
     return p;
 }
-

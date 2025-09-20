@@ -9,7 +9,7 @@ Arena* get_request_arena() {
 }
 
 Arena* get_fresh_request_arena() {
-    Arena *arena = get_request_arena();
+    Arena* arena = get_request_arena();
     arena_clear(arena);
     return arena;
 }

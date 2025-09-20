@@ -94,7 +94,7 @@ void dict_remove(Dict *d, const char *key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
-    if(d->arena) {
+    if (d->arena) {
         bucket_arena_remove(&d->buckets[idx], key);
     } else {
         bucket_remove(&d->buckets[idx], key);
@@ -156,12 +156,10 @@ void *bucket_get(DictBucket *b, const char *key) {
     return NULL;
 }
 
-
-void _bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
-     for (int i = 0; i < b->size; i++) {
+void bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
+    for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
-            if (!has_arena)
-                free(b->items[i].key);
+            if (!has_arena) free(b->items[i].key);
 
             // Shift the items
             for (int k = i + 1; k < b->size; k++) {
@@ -177,13 +175,9 @@ void _bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
     }
 }
 
-void bucket_remove(DictBucket *b, const char *key) {
-   _bucket_remove_impl(b, key, false);
-}
+void bucket_remove(DictBucket *b, const char *key) { bucket_remove_impl(b, key, false); }
 
-void bucket_arena_remove(DictBucket *b, const char *key) {
-    _bucket_remove_impl(b, key, true);
-}
+void bucket_arena_remove(DictBucket *b, const char *key) { bucket_remove_impl(b, key, true); }
 
 void dict_print(Dict *d) {
     printf("==== Dict Start ====\n");

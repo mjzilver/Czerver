@@ -14,7 +14,10 @@ char *read_file(const char *path) {
 
     fseek(file, 0, SEEK_END);
     long file_size = ftell(file);
-    rewind(file);
+    if (fseek(file, 0, SEEK_SET) != 0) {
+        perror("fseek failed");
+        return NULL;
+    }
 
     char *content = malloc(file_size + 1);
     if (content == NULL) {

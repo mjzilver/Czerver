@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "arena.h"
 
 ArrayList *arraylist_new(size_t initial_capacity) {
@@ -18,7 +19,7 @@ ArrayList *arraylist_new(size_t initial_capacity) {
     return list;
 }
 
-ArrayList *arraylist_arena_new(Arena* arena, size_t initial_capacity) {
+ArrayList *arraylist_arena_new(Arena *arena, size_t initial_capacity) {
     ArrayList *list = arena_alloc(arena, sizeof(ArrayList));
 
     list->len = 0;
@@ -74,7 +75,7 @@ void arraylist_remove(ArrayList *list, void *value_to_remove, CompareFunc cmp) {
     size_t free_count = 0;
 
     if (!list->arena) {
-        to_free = malloc(sizeof(void*) * list->len);
+        to_free = malloc(sizeof(void *) * list->len);
     }
 
     for (size_t i = 0; i < original_len; i++) {

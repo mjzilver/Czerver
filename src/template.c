@@ -11,16 +11,16 @@
 #include "globals.h"
 #include "utils.h"
 
-const char *VAR_DELIM_START = "{{";
-const char *VAR_DELIM_END = "}}";
+#define VAR_DELIM_START "{{"
+#define VAR_DELIM_END "}}"
 
-const char *PARENT_DELIM_START = "%";
-const char *PARENT_DELIM_END = "%";
+#define PARENT_DELIM_START "%"
+#define PARENT_DELIM_END "%"
 
-const char *LOOP_DELIM_START = "#for";
-const char *LOOP_DELIM_END = "#endfor";
+#define LOOP_DELIM_START "#for"
+#define LOOP_DELIM_END "#endfor"
 
-const char *CHILD_CONTENT_MARKER = "_content_";
+#define CHILD_CONTENT_MARKER "_content_"
 
 extern Dict *var_dict;
 

@@ -2,6 +2,7 @@
 #define DICT_H
 
 #include <stddef.h>
+
 #include "arena.h"
 
 #define INITIAL_BUCKET_CAPACITY 5
@@ -33,7 +34,7 @@ typedef struct Dict {
 typedef void (*DictCallback)(const char *key, void *value, void *user_context);
 
 Dict *dict_new(size_t initial_capacity);
-Dict* dict_arena_new(Arena* arena, size_t initial_capacity);
+Dict *dict_arena_new(Arena *arena, size_t initial_capacity);
 
 void dict_free_all(Dict *d);
 void dict_print(Dict *d);

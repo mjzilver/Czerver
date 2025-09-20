@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
+
 #include "arena.h"
 
 typedef struct ArrayItem {
@@ -19,7 +20,7 @@ typedef struct ArrayList {
 } ArrayList;
 
 ArrayList *arraylist_new(size_t initial_capacity);
-ArrayList *arraylist_arena_new(Arena* arena, size_t initial_capacity);
+ArrayList *arraylist_arena_new(Arena *arena, size_t initial_capacity);
 
 void arraylist_free(ArrayList *list);
 

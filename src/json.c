@@ -13,7 +13,7 @@
 
 Arena* get_json_arena() {
     static Arena* arena = NULL;
-    static const int JSON_ARENA_SIZE = 1024 * 1024; // 1 megabyte
+    static const int JSON_ARENA_SIZE = 1024 * 1024;  // 1 megabyte
 
     if (!arena) {
         arena = arena_new(JSON_ARENA_SIZE);
@@ -61,7 +61,7 @@ json_token* parse_json_string(const char* json_string, size_t* i, const char QUO
         const char C = json_string[*i];
 
         if (C == QUOTE_CHAR) {
-            tok->value.string = arena_strdup(get_json_arena(), buff->data); 
+            tok->value.string = arena_strdup(get_json_arena(), buff->data);
             (*i)++;  // Consume closing quote
             return tok;
         }
@@ -101,7 +101,7 @@ void append_single_char_token(ArrayList* tokens, json_token_type type) {
 }
 
 ArrayList* json_tokenize(const char* json_string) {
-    ArrayList* tokens = arraylist_arena_new(get_json_arena(),100);
+    ArrayList* tokens = arraylist_arena_new(get_json_arena(), 100);
     size_t len = strlen(json_string);
 
     for (size_t i = 0; i < len;) {
@@ -168,7 +168,7 @@ ArrayList* json_tokenize(const char* json_string) {
             continue;
         }
         if (i + 3 < len && strncmp(json_string + i, "true", 4) == 0) {
-            json_token* tok = arena_alloc(get_json_arena(),sizeof(json_token));
+            json_token* tok = arena_alloc(get_json_arena(), sizeof(json_token));
             tok->type = BOOLEAN;
             tok->value.boolean = true;
             arraylist_append(tokens, tok, false);
@@ -176,7 +176,7 @@ ArrayList* json_tokenize(const char* json_string) {
             continue;
         }
         if (i + 4 < len && strncmp(json_string + i, "false", 5) == 0) {
-            json_token* tok = arena_alloc(get_json_arena(),sizeof(json_token));
+            json_token* tok = arena_alloc(get_json_arena(), sizeof(json_token));
             tok->type = BOOLEAN;
             tok->value.boolean = false;
             arraylist_append(tokens, tok, false);
@@ -192,7 +192,7 @@ ArrayList* json_tokenize(const char* json_string) {
 }
 
 json_object* proces_value_type(json_token* tok) {
-    json_object* obj = arena_alloc(get_json_arena(),sizeof(json_object));
+    json_object* obj = arena_alloc(get_json_arena(), sizeof(json_object));
 
     switch (tok->type) {
         case STRING: {
@@ -223,7 +223,7 @@ json_object* process_tokens(ArrayList* tokens, size_t* i);
 json_object* process_object_tokens(ArrayList* tokens, size_t* i) {
     (*i)++;  // consume {
 
-    json_object* obj = arena_alloc(get_json_arena(),sizeof(json_object));
+    json_object* obj = arena_alloc(get_json_arena(), sizeof(json_object));
     obj->type = JSON_OBJECT;
     obj->value.object = dict_arena_new(get_json_arena(), 10);
 
@@ -276,7 +276,7 @@ json_object* process_array_tokens(ArrayList* tokens, size_t* i) {
 
     json_object* obj = arena_alloc(get_json_arena(), sizeof(json_object));
     obj->type = JSON_ARRAY;
-    obj->value.array = arraylist_arena_new(get_json_arena() ,10);
+    obj->value.array = arraylist_arena_new(get_json_arena(), 10);
 
     while (true) {
         json_token* tok = arraylist_get(tokens, *i);
@@ -326,7 +326,7 @@ json_object* process_tokens(ArrayList* tokens, size_t* i) {
             return obj;
         }
         case NULL_TOKEN: {
-            json_object* obj = arena_alloc(get_json_arena(),sizeof(json_object));
+            json_object* obj = arena_alloc(get_json_arena(), sizeof(json_object));
             obj->type = JSON_NULL;
             (*i)++;
             return obj;
@@ -336,7 +336,6 @@ json_object* process_tokens(ArrayList* tokens, size_t* i) {
             return NULL;
     }
 }
-
 
 json_object* json_decode(const char* json_string) {
     size_t i = 0;
@@ -388,7 +387,7 @@ void json_dict_iterate(const char* key, void* value, void* user_context) {
     buffer_append(buf, ",", 1);
 }
 
-void json_array_list_iterate(ArrayItem* item, size_t index, void* user_context) {
+void json_arraylist_iterate(ArrayItem* item, size_t index, void* user_context) {
     (void)index;
     Buffer* buf = (Buffer*)user_context;
     json_object* elem = (json_object*)item->value;
@@ -428,7 +427,7 @@ void json_encode_to_buffer(const json_object* obj, Buffer* buf) {
 
         case JSON_ARRAY:
             buffer_append(buf, "[", 1);
-            arraylist_iterate(obj->value.array, json_array_list_iterate, buf);
+            arraylist_iterate(obj->value.array, json_arraylist_iterate, buf);
             buffer_remove(buf, 1);  // Remove trailing comma
             buffer_append(buf, "]", 1);
             break;
@@ -448,6 +447,4 @@ char* json_encode(const json_object* obj) {
     return result;
 }
 
-void json_free() {
-    arena_clear(get_json_arena());
-}
+void json_free() { arena_clear(get_json_arena()); }

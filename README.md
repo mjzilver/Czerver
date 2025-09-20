@@ -8,12 +8,19 @@ Tested on **macOS** and **Linux** (UNIX only).
 
 ## Features
 
-* Serves static files (HTML, CSS, JS) from `/public`
-* Automatic **route registration** for everything under `/public`
-* **Template inheritance** via `_content_` placeholders
-* **Variable injection** using `{{ variable_name }}`
-* **For loops** using `#for item in items`
-* **Post requests** handled via Lua
+- Serves static files (HTML, CSS, JS) from `/public`
+- Automatic **route registration** for everything under `/public`
+- **Template inheritance** via `_content_` placeholders
+- **Variable injection** using `{{ variable_name }}`
+- **For loops** using `#for item in items`
+- **Post requests** handled via Lua
+- **API handlers** both POST and GET requests using C functions
+- **Custom JSON parser** Used for API endpoints
+
+## Custom datastructures
+- Dictionary
+- Arraylist
+- Arena Allocator
 
 ---
 

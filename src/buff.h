@@ -2,6 +2,7 @@
 #define BUFF_H
 
 #include <stddef.h>
+
 #include "arena.h"
 
 typedef struct {
