@@ -25,13 +25,13 @@ int main(int argc, char const *argv[]) {
     dict_set(var_dict, "item_two", "Second item");
     dict_set(var_dict, "item_three", "Third item");
 
-    ArrayList *list = arraylist_new(4);
-    arraylist_append(list, strdup("Clean room"), true);
-    arraylist_append(list, strdup("Get groceries"), true);
-    arraylist_append(list, strdup("Walk dog"), true);
-    arraylist_append(list, strdup("Mow grass"), true);
+    ArrayList *todo_list = arraylist_new(4);
+    arraylist_append(todo_list, strdup("Clean room"), true);
+    arraylist_append(todo_list, strdup("Get groceries"), true);
+    arraylist_append(todo_list, strdup("Walk dog"), true);
+    arraylist_append(todo_list, strdup("Mow grass"), true);
 
-    dict_set(var_dict, "todos", list);
+    dict_set(var_dict, "todos", todo_list);
 
     register_folder("GET", "/", cfg->get_dir);
     register_folder("POST", "/", cfg->post_dir);
@@ -57,6 +57,6 @@ int main(int argc, char const *argv[]) {
     unregister_all_routes();
     dict_free_all(var_dict);
     free(cfg);
-    arraylist_free(list);
+    arraylist_free(todo_list);
     return 0;
 }

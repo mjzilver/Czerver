@@ -10,7 +10,7 @@
 
 #include "dict.h"
 #include "file.h"
-#include "http_codes.h"
+#include "globals.h"
 
 Dict *routes_dict = NULL;
 
@@ -101,6 +101,8 @@ void register_route(const char *method, const char *url_path, const char *file_p
         route->type = CSS_TYPE;
     } else if (strstr(file_path, ".js") != NULL) {
         route->type = JS_TYPE;
+    } else if (strstr(file_path, ".lua") != NULL) {
+        route->type = LUA_TYPE;
     } else {
         route->type = UNKNOWN_TYPE;
     }
@@ -177,23 +179,3 @@ char *get_type_header(FileType type) {
 }
 
 char *get_file_content(const char *path) { return read_file(path); }
-
-void send_404(char *path, int client) {
-    char *response = malloc(strlen(HTTP_404) + strlen(path) + 1);
-    if (response == NULL) return;
-
-    strcpy(response, HTTP_404);
-    strcat(response, path);
-
-    Route *route = DICT_GET_AS(Route, routes_dict, "/404");
-    if (route != NULL) {
-        char *file_content = process_template(route->cached_file);
-        response = realloc(response, strlen(response) + strlen(file_content) + 1);
-        assert(response != NULL);
-        strcat(response, file_content);
-        free(file_content);
-    }
-
-    send(client, response, strlen(response), 0);
-    free(response);
-}

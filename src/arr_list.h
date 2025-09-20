@@ -33,6 +33,6 @@ typedef int (*CompareFunc)(const void *a, const void *b);
 void arraylist_remove(ArrayList *list, void *value_to_remove, CompareFunc cmp);
 void *arraylist_get(ArrayList *list, size_t index);
 
-int str_cmp(const void *a, const void *b);
+int string_compare_function(const void *a, const void *b);
 
 #endif

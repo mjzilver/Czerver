@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "arr_list.h"
+#include "arr_list_utils.h"
 #include "dict.h"
 #include "globals.h"
 
@@ -29,9 +30,46 @@ static int lua_dict_arr_append(lua_State *lua) {
     const char *value = luaL_checkstring(lua, 2);
 
     ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
+    if (!list) {
+        list = arraylist_new(10);
+        dict_set(var_dict, list_name, list);
+    }
+
     arraylist_append(list, strdup(value), true);
 
     return 0;
+}
+
+static int lua_dict_get_string(lua_State *lua) {
+    const char *key = luaL_checkstring(lua, 1);
+
+    char *str = DICT_GET_AS(char, var_dict, key);
+    if (str) {
+        lua_pushstring(lua, str);
+    } else {
+        lua_pushnil(lua);
+    }
+
+    return 1;
+}
+
+static int lua_dict_get_array(lua_State *lua) {
+    const char *key = luaL_checkstring(lua, 1);
+    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, key);
+
+    if (!list) {
+        lua_pushnil(lua);
+        return 1;
+    }
+
+    lua_newtable(lua);
+    for (int i = 0; i < list->len; i++) {
+        lua_pushinteger(lua, i + 1);
+        lua_pushstring(lua, (char *)list->items[i].value);
+        lua_settable(lua, -3);
+    }
+
+    return 1;
 }
 
 static int lua_dict_arr_remove(lua_State *lua) {
@@ -39,7 +77,7 @@ static int lua_dict_arr_remove(lua_State *lua) {
     const char *value = luaL_checkstring(lua, 2);
 
     ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
-    arraylist_remove(list, (void *)value, str_cmp);
+    arraylist_remove(list, (void *)value, string_compare_function);
     return 0;
 }
 
@@ -103,6 +141,12 @@ char *execute_lua(const char *lua_file, const char *post_body) {
 
     lua_pushcfunction(lua, lua_dict_replace);
     lua_setglobal(lua, "set_var");
+
+    lua_pushcfunction(lua, lua_dict_get_string);
+    lua_setglobal(lua, "get_var");
+
+    lua_pushcfunction(lua, lua_dict_get_array);
+    lua_setglobal(lua, "get_arr");
 
     lua_pushcfunction(lua, lua_dict_arr_append);
     lua_setglobal(lua, "append_to_arr");

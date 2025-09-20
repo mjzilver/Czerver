@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "dict.h"
 #include "globals.h"
 #include "http_codes.h"
 #include "lua.h"
@@ -91,7 +92,7 @@ static void send_response(int client, const char *body, const char *content_type
     char response[8192] = {0};
 
     snprintf(response, sizeof(response),
-             "HTTP/1.1 200 OK\r\n"
+             HTTP_200
              "Content-Type: %s\r\n"
              "Content-Length: %zu\r\n"
              "Connection: close\r\n"
@@ -121,8 +122,14 @@ static void send_redirect(int client, const char *url) {
 static void handle_static_route_request(int client, const char *buffer, const char *method, Route *route) {
     if (strcmp(method, "GET") == 0) {
         char *file_content = process_template(route->cached_file);
-        char *type_header = get_type_header(route->type);
-        send_response(client, file_content, type_header);
+
+        if (route->type == LUA_TYPE) {
+            char *response_body = execute_lua(file_content, NULL);
+            send_response(client, response_body, get_type_header(HTML_TYPE));
+        } else {
+            char *type_header = get_type_header(route->type);
+            send_response(client, file_content, type_header);
+        }
         free(file_content);
     } else if (strcmp(method, "POST") == 0) {
         char *body = strstr(buffer, "\r\n\r\n");
@@ -149,6 +156,41 @@ static void handle_api_route_request(int client, const char *buffer, const char 
     char *response_json = route->handler(body);
     send_response(client, response_json, "application/json");
     free(response_json);
+}
+
+void send_404(char *path, int client) {
+    char *body = NULL;
+    Route *route = DICT_GET_AS(Route, routes_dict, "/404.html");
+    if (route != NULL) {
+        dict_set(var_dict, "current_path", strdup(path));
+        body = process_template(route->cached_file);
+    } else {
+        const char *default_body_fmt = "<h1>404 Not Found</h1><p>%s not found</p>";
+        size_t needed = snprintf(NULL, 0, default_body_fmt, path) + 1;
+        body = malloc(needed);
+        snprintf(body, needed, default_body_fmt, path);
+    }
+
+    size_t body_len = strlen(body);
+
+    char header[512];
+    int header_len = snprintf(header, sizeof(header),
+                              HTTP_404
+                              "Content-Type: text/html\r\n"
+                              "Content-Length: %zu\r\n"
+                              "Connection: close\r\n"
+                              "Access-Control-Allow-Origin: *\r\n"
+                              "\r\n",
+                              body_len);
+
+    send(client, header, header_len, 0);
+    send(client, body, body_len, 0);
+
+#if DEBUG
+    printf("404 for path %s\n", path);
+#endif
+
+    free(body);
 }
 
 static void handle_request(int client, const char *buffer, const char *method) {

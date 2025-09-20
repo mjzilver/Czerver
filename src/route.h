@@ -8,7 +8,7 @@
 #define CSS "text/css"
 #define JS "application/javascript"
 
-typedef enum FileType { HTML_TYPE, CSS_TYPE, JS_TYPE, UNKNOWN_TYPE } FileType;
+typedef enum FileType { HTML_TYPE, CSS_TYPE, JS_TYPE, LUA_TYPE, UNKNOWN_TYPE } FileType;
 typedef enum RouteKind { STATIC_ROUTE, API_ROUTE } RouteKind;
 
 typedef char *(*ApiHandler)(const char *request_body);
@@ -30,7 +30,6 @@ void register_api_route(const char *method, const char *url_path, ApiHandler han
 void unregister_route(const char *url_path);
 char *get_file_content(const char *path);
 void unregister_all_routes();
-void send_404(char *path, int client);
 char *get_type_header(FileType type);
 
 #endif

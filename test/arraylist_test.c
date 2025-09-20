@@ -1,5 +1,6 @@
 #include <check.h>
 #include "../src/arr_list.h"
+#include "../src/arr_list_utils.h"
 #include <stdlib.h>
 
 START_TEST(test_append_and_get) {
@@ -22,10 +23,6 @@ START_TEST(test_append_and_get) {
 }
 END_TEST
 
-int int_cmp(const void *a, const void *b) {
-    return *(int *)a - *(int *)b;
-}
-
 START_TEST(test_remove) {
     ArrayList *list = arraylist_new(2);
 
@@ -37,7 +34,7 @@ START_TEST(test_remove) {
     arraylist_append(list, x, true);
     arraylist_append(list, y, true);
 
-    arraylist_remove(list, x, int_cmp);
+    arraylist_remove(list, x, int_compare_function);
 
     ck_assert_int_eq(list->len, 1);
     ck_assert_int_eq(*(int *)arraylist_get(list, 0), 10);

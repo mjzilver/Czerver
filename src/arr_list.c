@@ -102,8 +102,6 @@ void *arraylist_get(ArrayList *list, size_t index) {
     return list->items[index].value;
 }
 
-int str_cmp(const void *a, const void *b) { return strcmp((const char *)a, (const char *)b); }
-
 void arraylist_iterate(ArrayList *list, ArrayListCallback cb, void *user_context) {
     for (size_t i = 0; i < list->len; i++) {
         cb(&list->items[i], i, user_context);
