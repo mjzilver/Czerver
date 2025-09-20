@@ -9,7 +9,7 @@ START_TEST(test_decode_string) {
     ck_assert_int_eq(obj->type, JSON_STRING);
     ck_assert_str_eq(obj->value.string, "hello");
 
-    json_free(obj);
+    json_free();
 }
 END_TEST
 
@@ -21,7 +21,7 @@ START_TEST(test_decode_number) {
     ck_assert_int_eq(obj->type, JSON_NUMBER);
     ck_assert_double_eq_tol(obj->value.number, 42.0, 1e-9);
 
-    json_free(obj);
+    json_free();
 }
 END_TEST
 
@@ -32,7 +32,7 @@ START_TEST(test_decode_null) {
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_NULL);
 
-    json_free(obj);
+    json_free();
 }
 END_TEST
 
@@ -56,7 +56,7 @@ START_TEST(test_decode_array) {
         ck_assert_double_eq_tol(elem->value.number, (double)(i + 1), 1e-9);
     }
 
-    json_free(obj);
+    json_free();
 }
 END_TEST
 
@@ -77,7 +77,7 @@ START_TEST(test_decode_object) {
     ck_assert_int_eq(val_b->type, JSON_NUMBER);
     ck_assert_double_eq_tol(val_b->value.number, 2.0, 1e-9);
 
-    json_free(obj);
+    json_free();
 }
 END_TEST
 

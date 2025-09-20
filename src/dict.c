@@ -1,9 +1,12 @@
 #include "dict.h"
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "arena.h"
 
 Dict *dict_new(size_t initial_capacity) {
     Dict *d = malloc(sizeof(Dict));
@@ -12,6 +15,7 @@ Dict *dict_new(size_t initial_capacity) {
     d->size = 0;
     d->capacity = initial_capacity;
     d->buckets = malloc(sizeof(DictBucket) * initial_capacity);
+    d->arena = NULL;
     assert(d->buckets != NULL);
 
     for (int i = 0; i < initial_capacity; i++) {
@@ -23,7 +27,26 @@ Dict *dict_new(size_t initial_capacity) {
     return d;
 }
 
+Dict *dict_arena_new(Arena *arena, size_t initial_capacity) {
+    Dict *d = arena_alloc(arena, sizeof(Dict));
+
+    d->size = 0;
+    d->capacity = initial_capacity;
+    d->buckets = arena_alloc(arena, sizeof(DictBucket) * initial_capacity);
+    d->arena = arena;
+
+    for (size_t i = 0; i < initial_capacity; i++) {
+        d->buckets[i].size = 0;
+        d->buckets[i].capacity = INITIAL_BUCKET_CAPACITY;
+        d->buckets[i].items = arena_alloc(arena, sizeof(DictItem) * INITIAL_BUCKET_CAPACITY);
+    }
+
+    return d;
+}
+
 void dict_free_all(Dict *d) {
+    if (d->arena) return;
+
     for (int i = 0; i < d->capacity; i++) {
         for (int j = 0; j < d->buckets[i].size; j++) {
             free(d->buckets[i].items[j].key);
@@ -53,7 +76,11 @@ void dict_set(Dict *d, const char *key, void *value) {
 
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
-    bucket_set(&d->buckets[idx], key, value);
+    if (d->arena) {
+        bucket_arena_set(&d->buckets[idx], d->arena, key, value);
+    } else {
+        bucket_set(&d->buckets[idx], key, value);
+    }
 }
 
 void *dict_get(Dict *d, const char *key) {
@@ -67,7 +94,11 @@ void dict_remove(Dict *d, const char *key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
-    bucket_remove(&d->buckets[idx], key);
+    if(d->arena) {
+        bucket_arena_remove(&d->buckets[idx], key);
+    } else {
+        bucket_remove(&d->buckets[idx], key);
+    }
 }
 
 void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
@@ -77,6 +108,27 @@ void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
             cb(b->items[j].key, b->items[j].value, user_context);
         }
     }
+}
+
+void bucket_arena_set(DictBucket *b, Arena *arena, const char *key, void *value) {
+    DictItem di;
+    di.key = arena_strdup(arena, key);
+    di.value = value;
+    assert(di.key != NULL);
+
+    if (b->size >= b->capacity) {
+        size_t new_capacity = b->capacity * 2;
+        DictItem *new_items = arena_alloc(arena, sizeof(DictItem) * new_capacity);
+        assert(new_items != NULL);
+
+        memcpy(new_items, b->items, sizeof(DictItem) * b->size);
+
+        b->items = new_items;
+        b->capacity = new_capacity;
+    }
+
+    b->items[b->size] = di;
+    b->size++;
 }
 
 void bucket_set(DictBucket *b, const char *key, void *value) {
@@ -104,10 +156,12 @@ void *bucket_get(DictBucket *b, const char *key) {
     return NULL;
 }
 
-void bucket_remove(DictBucket *b, const char *key) {
-    for (int i = 0; i < b->size; i++) {
+
+void _bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
+     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
-            free(b->items[i].key);
+            if (!has_arena)
+                free(b->items[i].key);
 
             // Shift the items
             for (int k = i + 1; k < b->size; k++) {
@@ -121,6 +175,14 @@ void bucket_remove(DictBucket *b, const char *key) {
             return;
         }
     }
+}
+
+void bucket_remove(DictBucket *b, const char *key) {
+   _bucket_remove_impl(b, key, false);
+}
+
+void bucket_arena_remove(DictBucket *b, const char *key) {
+    _bucket_remove_impl(b, key, true);
 }
 
 void dict_print(Dict *d) {

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 #include <unistd.h>
 
 #include "globals.h"
@@ -83,12 +84,21 @@ static char *extract_path(const char *buffer) {
 }
 
 static void send_response(int client, const char *body, const char *content_type) {
-    char response[4096] = {0};
-    strcat(response, HTTP_200);
-    strcat(response, "Content-Type: ");
-    strcat(response, content_type);
-    strcat(response, "\n\n");
-    strcat(response, body);
+    if (!body) body = "";
+    if (!content_type) content_type = "text/plain";
+
+    size_t body_len = strlen(body);
+    char response[8192] = {0};
+
+    snprintf(response, sizeof(response),
+             "HTTP/1.1 200 OK\r\n"
+             "Content-Type: %s\r\n"
+             "Content-Length: %zu\r\n"
+             "Connection: close\r\n"
+             "Access-Control-Allow-Origin: *\r\n"
+             "\r\n"
+             "%s",
+             content_type, body_len, body);
 
 #if DEBUG
     printf("Sending response:\n%s\n", response);
@@ -108,16 +118,7 @@ static void send_redirect(int client, const char *url) {
     send(client, response, strlen(response), 0);
 }
 
-static void handle_request(int client, const char *buffer, const char *method) {
-    char *path = extract_path(buffer);
-    Route *route = DICT_GET_AS(Route, routes_dict, path);
-
-    if (!route || strcmp(route->method, method) != 0) {
-        send_404(path, client);
-        free(path);
-        return;
-    }
-
+static void handle_static_route_request(int client, const char *buffer, const char *method, Route *route) {
     if (strcmp(method, "GET") == 0) {
         char *file_content = process_template(route->cached_file);
         char *type_header = get_type_header(route->type);
@@ -138,7 +139,33 @@ static void handle_request(int client, const char *buffer, const char *method) {
         send_response(client, response_body, "text/html");
         free(response_body);
     }
+}
 
+static void handle_api_route_request(int client, const char *buffer, const char *method, Route *route) {
+    (void)method;
+    char *body = strstr(buffer, "\r\n\r\n");
+    if (body) body += 4;
+
+    char *response_json = route->handler(body);
+    send_response(client, response_json, "application/json");
+    free(response_json);
+}
+
+static void handle_request(int client, const char *buffer, const char *method) {
+    char *path = extract_path(buffer);
+    Route *route = DICT_GET_AS(Route, routes_dict, path);
+
+    if (!route || strcmp(route->method, method) != 0) {
+        send_404(path, client);
+        free(path);
+        return;
+    }
+
+    if (route->kind == STATIC_ROUTE) {
+        handle_static_route_request(client, buffer, method, route);
+    } else if (route->kind == API_ROUTE) {
+        handle_api_route_request(client, buffer, method, route);
+    }
     free(path);
 }
 

@@ -1,0 +1,39 @@
+### Addition
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": 10,
+    "b": 5,
+    "op": "+"
+}
+
+### Subtraction
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": 10,
+    "b": 5,
+    "op": "-"
+}
+
+### Multiplication
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": 10,
+    "b": 5,
+    "op": "*"
+}
+
+### Division
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": 10,
+    "b": 5,
+    "op": "/"
+}

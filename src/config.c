@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dict.h"
 #include "file.h"
 #include "globals.h"
+#include "json.h"
 
 typedef enum KeyType { TYPE_INT, TYPE_STRING } KeyType;
 
@@ -17,67 +19,30 @@ typedef struct ConfigKey {
     size_t max_len;
 } ConfigKey;
 
-ConfigKey keys[] = {
-    {"port", TYPE_INT, NULL, 0},
-    {"site_title", TYPE_STRING, NULL, 128},
-    {"get_dir", TYPE_STRING, NULL, 128},
-    {"post_dir", TYPE_STRING, NULL, 128},
-};
-
-size_t key_count = sizeof(keys) / sizeof(keys[0]);
-
-void parse_config_line(const char *line) {
-    while (*line == ' ' || *line == '\t') line++;
-    if (*line == '\0' || *line == '#') return;
-
-    for (size_t i = 0; i < key_count; i++) {
-        size_t key_len = strlen(keys[i].name);
-
-        if (strncmp(line, keys[i].name, key_len) == 0 && (line[key_len] == ' ' || line[key_len] == '=')) {
-            const char *value_str = line + key_len;
-            while (*value_str == ' ' || *value_str == '\t' || *value_str == '=') value_str++;
-
-            if (keys[i].type == TYPE_INT) {
-                *(int *)keys[i].ptr = atoi(value_str);
-            } else if (keys[i].type == TYPE_STRING) {
-                char fmt[255];
-                snprintf(fmt, sizeof(fmt), " \"%%%zu[^\"]\"", keys[i].max_len - 1);
-
-                char tmp[keys[i].max_len];
-                if (sscanf(value_str, fmt, tmp) == 1) {
-                    *(char **)keys[i].ptr = strdup(tmp);
-                }
-            }
-#if DEBUG
-            if (keys[i].type == TYPE_INT) {
-                printf("Parsed %s : %d\n", keys[i].name, *(int *)keys[i].ptr);
-            } else if (keys[i].type == TYPE_STRING) {
-                printf("Parsed %s : %s\n", keys[i].name, *(char **)keys[i].ptr);
-            }
-#endif
-            return;
-        }
-    }
-}
-
 void parse_file_content(const char *content) {
-    char *copy = strdup(content);
-    char *line = strtok(copy, "\n");
-    while (line) {
-        parse_config_line(line);
-        line = strtok(NULL, "\n");
-    }
-    free(copy);
+    json_object *config_json = json_decode(content);
+    Dict *server_obj = config_json->value.object;
+    Dict *server = ((json_object *)dict_get(server_obj, "server"))->value.object;
+
+    cfg->port = ((json_object *)dict_get(server, "port"))->value.number;
+    cfg->get_dir = ((json_object *)dict_get(server, "get_dir"))->value.string;
+    cfg->post_dir = ((json_object *)dict_get(server, "post_dir"))->value.string;
+    cfg->site_title = ((json_object *)dict_get(server, "site_title"))->value.string;
+
+    json_free();
 }
 
 static const char *default_config =
-    "[server]"
-    "port = 8080"
-    "get_dir = \"./public\""
-    "post_dir = \"./post\""
-    "site_title = \"Czerver\"";
+    "{\n"
+    "  \"server\": {\n"
+    "    \"port\": 8080,\n"
+    "    \"get_dir\": \"./public\",\n"
+    "    \"post_dir\": \"./post\",\n"
+    "    \"site_title\": \"Czerver\"\n"
+    "  }\n"
+    "}\n";
 
-void parse_toml_config(const char *file_path) {
+void parse_json_config(const char *file_path) {
     char *file_content = read_file(file_path);
 
     if (file_content == NULL) {
@@ -91,11 +56,6 @@ void parse_toml_config(const char *file_path) {
 #endif
 
     cfg = malloc(sizeof(Config));
-
-    keys[0].ptr = &cfg->port;
-    keys[1].ptr = &cfg->site_title;
-    keys[2].ptr = &cfg->get_dir;
-    keys[3].ptr = &cfg->post_dir;
 
     parse_file_content(file_content);
 

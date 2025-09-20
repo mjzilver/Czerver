@@ -105,10 +105,31 @@ void register_route(const char *method, const char *url_path, const char *file_p
         route->type = UNKNOWN_TYPE;
     }
 
+    route->kind = STATIC_ROUTE;
+
     if (route->cached_file == NULL) {
         perror("Failed to load file content");
         exit(1);
     }
+
+    if (routes_dict == NULL) {
+        routes_dict = dict_new(INITIAL_DICT_CAPACITY);
+    }
+
+    unregister_route(url_path);
+    dict_set(routes_dict, url_path, route);
+}
+
+void register_api_route(const char *method, const char *url_path, ApiHandler handler) {
+    Route *route = malloc(sizeof(Route));
+    assert(route != NULL);
+
+    strcpy(route->method, method);
+    strcpy(route->url_path, url_path);
+    route->kind = API_ROUTE;
+    route->handler = handler;
+    route->file_path[0] = '\0';
+    route->cached_file = NULL;
 
     if (routes_dict == NULL) {
         routes_dict = dict_new(INITIAL_DICT_CAPACITY);

@@ -9,7 +9,7 @@ START_TEST(test_encode_string) {
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "\"hello\"");
 
-    free(encoded);
+    json_free();
 }
 END_TEST
 
@@ -20,7 +20,7 @@ START_TEST(test_encode_number) {
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "42");
 
-    free(encoded);
+    json_free();
 }
 END_TEST
 
@@ -31,7 +31,7 @@ START_TEST(test_encode_null) {
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "null");
 
-    free(encoded);
+    json_free();
 }
 END_TEST
 
@@ -61,8 +61,8 @@ START_TEST(test_encode_array) {
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "[1,2,3]");
 
-    free(encoded);
-    json_free(&obj);
+    json_free();
+    arraylist_free(arr);
 }
 END_TEST
 
@@ -87,8 +87,10 @@ START_TEST(test_encode_object) {
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "{\"a\":1,\"b\":2}");
 
-    free(encoded);
-    json_free(&obj);
+    json_free();
+    dict_free_all(dict);
+    free(a);
+    free(b);
 }
 END_TEST
 

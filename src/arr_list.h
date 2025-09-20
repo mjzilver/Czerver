@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <string.h>
+#include "arena.h"
 
 typedef struct ArrayItem {
     void *value;
@@ -14,9 +15,12 @@ typedef struct ArrayList {
     ArrayItem *items;
     size_t len;
     size_t capacity;
+    Arena *arena;
 } ArrayList;
 
 ArrayList *arraylist_new(size_t initial_capacity);
+ArrayList *arraylist_arena_new(Arena* arena, size_t initial_capacity);
+
 void arraylist_free(ArrayList *list);
 
 void arraylist_append(ArrayList *list, void *value, bool take_ownership);

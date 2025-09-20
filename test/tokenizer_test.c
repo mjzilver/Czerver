@@ -12,7 +12,7 @@ START_TEST(test_single_punctuation_tokens) {
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 4))->type, COLON);
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 5))->type, COMMA);
 
-    arraylist_free(tokens);
+    json_free();
 }
 END_TEST
 
@@ -28,7 +28,7 @@ START_TEST(test_single_string_tokens) {
     ck_assert_int_eq(t2->type, STRING);
     ck_assert_str_eq(t2->value.string, "world");
 
-    arraylist_free(tokens);
+    json_free();
 }
 END_TEST
 
@@ -52,7 +52,7 @@ START_TEST(test_integer_number_tokens) {
     ck_assert_int_eq(t3->type, NUMBER);
     ck_assert_int_eq((int)t3->value.number, 42);
 
-    arraylist_free(tokens);
+    json_free();
 }
 END_TEST
 
@@ -86,7 +86,7 @@ START_TEST(test_mixed_tokens) {
     json_token* t7 = (json_token*)arraylist_get(tokens, 7);
     ck_assert_int_eq(t7->type, RIGHT_BRACE);
 
-    arraylist_free(tokens);
+    json_free();
 }
 END_TEST
 
@@ -106,7 +106,7 @@ START_TEST(test_array_with_numbers_and_strings) {
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 7))->type, STRING);
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 8))->type, RIGHT_BRACKET);
 
-    arraylist_free(tokens);
+    json_free();
 }
 
 START_TEST(test_object_with_numbers_and_commas) {
@@ -125,7 +125,7 @@ START_TEST(test_object_with_numbers_and_commas) {
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 7))->type, NUMBER);
     ck_assert_int_eq(((json_token*)arraylist_get(tokens, 8))->type, RIGHT_BRACE);
 
-    arraylist_free(tokens);
+    json_free();
 }
 END_TEST
 

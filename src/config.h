@@ -10,6 +10,6 @@ typedef struct Config {
     char* post_dir;
 } Config;
 
-void parse_toml_config(const char* file_path);
+void parse_json_config(const char* file_path);
 
 #endif

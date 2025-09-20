@@ -51,6 +51,7 @@ typedef struct json_token {
 ArrayList* json_tokenize(const char* json_string);
 json_object* json_decode(const char* json_string);
 char* json_encode(const json_object* obj);
-void json_free(json_object* obj);
+
+void json_free();
 
 #endif
