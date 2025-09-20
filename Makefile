@@ -83,6 +83,3 @@ format:
 
 tidy:
 	clang-tidy $(SRC_FILES) $(HEAD_FILES) -- $(CFLAGS) $(LUA_CFLAGS) $(CHECK_CFLAGS)
-
-port-kill:
-	@sudo lsof -t -i :8080 | xargs -r sudo kill -9
