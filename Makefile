@@ -58,7 +58,7 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 # ---------------- Test Build ----------------
-test: $(BIN_DIR)/run_tests
+test: build $(BIN_DIR)/run_tests
 	@$(BIN_DIR)/run_tests
 
 $(BIN_DIR)/run_tests: $(LIB_OBJS) $(TEST_OBJ_FILES) | $(BIN_DIR)
