@@ -47,24 +47,21 @@ build: $(BIN_DIR)/main
 $(BIN_DIR)/main: $(OBJ_FILES) | $(BIN_DIR)
 	$(CC) -o $@ $(OBJ_FILES) $(LUA_LIBS) $(LDFLAGS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIRS)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(LUA_CFLAGS) -c $< -o $@
 
-$(OBJ_DIRS):
-	@mkdir -p $@
-
 $(BIN_DIR):
-	mkdir -p $(BIN_DIR)
+	mkdir -p $(BIN_DIR)	
 
 # ---------------- Test Build ----------------
-test: build $(BIN_DIR)/run_tests
+test: $(BIN_DIR)/run_tests
 	@$(BIN_DIR)/run_tests
 
 $(BIN_DIR)/run_tests: $(LIB_OBJS) $(TEST_OBJ_FILES) | $(BIN_DIR)
 	$(CC) -o $@ $(LIB_OBJS) $(TEST_OBJ_FILES) $(CHECK_LIBS) $(LUA_LIBS) $(LDFLAGS)
 
-$(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c | $(OBJ_DIR)
+$(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(CHECK_CFLAGS) -c $< -o $@
 
