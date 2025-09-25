@@ -16,7 +16,7 @@ TEST_FILES := $(wildcard $(TEST_DIR)/*.c)
 TEST_OBJ_FILES := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%.test.o,$(TEST_FILES))
 
 CC := gcc
-CFLAGS := -D_POSIX_C_SOURCE=200809L -Wall -g -std=c11 -I$(SRC_DIR)
+CFLAGS := -Wall -g -std=c11 -I$(SRC_DIR)
 PKG_CONFIG := pkg-config
 LUA_PKG := lua
 CHECK_PKG := check

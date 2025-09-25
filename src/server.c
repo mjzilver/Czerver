@@ -14,6 +14,7 @@
 #include "lua.h"
 #include "route.h"
 #include "template.h"
+#include "string_utils.h"
 
 extern Dict *var_dict;
 
