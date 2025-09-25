@@ -122,7 +122,7 @@ static void send_redirect(int client, const char *url) {
 
 static void handle_static_route_request(int client, const char *buffer, const char *method, Route *route) {
     if (strcmp(method, "GET") == 0) {
-        char *file_content = NULL;  
+        char *file_content = NULL;
 
         if (route->type == LUA_TYPE) {
             char *response_body = execute_lua(route->cached_file, NULL);
