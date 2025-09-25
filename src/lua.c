@@ -9,6 +9,7 @@
 #include "arr_list_utils.h"
 #include "dict.h"
 #include "globals.h"
+#include "string_utils.h"
 
 extern Dict *var_dict;
 

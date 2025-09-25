@@ -10,6 +10,7 @@
 #include "file.h"
 #include "globals.h"
 #include "utils.h"
+#include "string_utils.h"
 
 #define VAR_DELIM_START "{{"
 #define VAR_DELIM_END "}}"

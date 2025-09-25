@@ -37,3 +37,20 @@ Content-Type: application/json
     "b": 5,
     "op": "/"
 }
+
+### Invalid format
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": 10,
+    "b": 1
+}
+
+### Broken JSON
+POST http://localhost:8080/api/math
+Content-Type: application/json
+
+{
+    "a": {{{}{}{}}}
+}

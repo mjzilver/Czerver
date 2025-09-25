@@ -1,7 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "api/math.h"
 #include "api/weather.h"
@@ -10,6 +9,7 @@
 #include "globals.h"
 #include "route.h"
 #include "server.h"
+#include "string_utils.h"
 
 int main(int argc, char const *argv[]) {
     parse_json_config("./config.json");

@@ -11,6 +11,7 @@
 #include "dict.h"
 #include "file.h"
 #include "globals.h"
+#include "string_utils.h"
 
 Dict *routes_dict = NULL;
 

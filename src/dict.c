@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "arena.h"
+#include "string_utils.h"
 
 Dict *dict_new(size_t initial_capacity) {
     Dict *d = malloc(sizeof(Dict));

@@ -10,6 +10,7 @@ START_TEST(test_encode_string) {
     ck_assert_str_eq(encoded, "\"hello\"");
 
     json_free();
+    free(encoded);
 }
 END_TEST
 
@@ -21,6 +22,7 @@ START_TEST(test_encode_number) {
     ck_assert_str_eq(encoded, "42");
 
     json_free();
+    free(encoded);
 }
 END_TEST
 
@@ -32,6 +34,7 @@ START_TEST(test_encode_null) {
     ck_assert_str_eq(encoded, "null");
 
     json_free();
+    free(encoded);
 }
 END_TEST
 
@@ -63,6 +66,7 @@ START_TEST(test_encode_array) {
 
     json_free();
     arraylist_free(arr);
+    free(encoded);
 }
 END_TEST
 
@@ -91,6 +95,7 @@ START_TEST(test_encode_object) {
     dict_free_all(dict);
     free(a);
     free(b);
+    free(encoded);
 }
 END_TEST
 
