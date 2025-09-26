@@ -3,6 +3,6 @@
 
 #include <stddef.h>
 
-void trim_whitespace(char *str);
+void trim_whitespace(char* str);
 
 #endif

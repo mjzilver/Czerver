@@ -6,8 +6,8 @@
 
 #include "arena.h"
 
-ArrayList *arraylist_new(size_t initial_capacity) {
-    ArrayList *list = malloc(sizeof(ArrayList));
+ArrayList* arraylist_new(size_t initial_capacity) {
+    ArrayList* list = malloc(sizeof(ArrayList));
     assert(list != NULL);
 
     list->len = 0;
@@ -19,8 +19,8 @@ ArrayList *arraylist_new(size_t initial_capacity) {
     return list;
 }
 
-ArrayList *arraylist_arena_new(Arena *arena, size_t initial_capacity) {
-    ArrayList *list = arena_alloc(arena, sizeof(ArrayList));
+ArrayList* arraylist_arena_new(Arena* arena, size_t initial_capacity) {
+    ArrayList* list = arena_alloc(arena, sizeof(ArrayList));
 
     list->len = 0;
     list->capacity = initial_capacity > 0 ? initial_capacity : 4;
@@ -30,7 +30,7 @@ ArrayList *arraylist_arena_new(Arena *arena, size_t initial_capacity) {
     return list;
 }
 
-void arraylist_free(ArrayList *list) {
+void arraylist_free(ArrayList* list) {
     if (!list) return;
     if (list->arena) return;
 
@@ -43,10 +43,10 @@ void arraylist_free(ArrayList *list) {
     free(list);
 }
 
-static void arraylist_grow(ArrayList *list) {
+static void arraylist_grow(ArrayList* list) {
     list->capacity *= 2;
     if (list->arena) {
-        ArrayItem *new_items = arena_alloc(list->arena, sizeof(ArrayItem) * list->capacity);
+        ArrayItem* new_items = arena_alloc(list->arena, sizeof(ArrayItem) * list->capacity);
         memcpy(new_items, list->items, sizeof(ArrayItem) * list->len);
         list->items = new_items;
     } else {
@@ -55,7 +55,7 @@ static void arraylist_grow(ArrayList *list) {
     }
 }
 
-void arraylist_append(ArrayList *list, void *value, bool take_ownership) {
+void arraylist_append(ArrayList* list, void* value, bool take_ownership) {
     if (list->len >= list->capacity) {
         arraylist_grow(list);
     }
@@ -65,17 +65,17 @@ void arraylist_append(ArrayList *list, void *value, bool take_ownership) {
     list->len++;
 }
 
-void arraylist_remove(ArrayList *list, void *value_to_remove, CompareFunc cmp) {
+void arraylist_remove(ArrayList* list, void* value_to_remove, CompareFunc cmp) {
     if (!list) return;
 
     size_t original_len = list->len;
     size_t j = 0;
 
-    void **to_free = NULL;
+    void** to_free = NULL;
     size_t free_count = 0;
 
     if (!list->arena) {
-        to_free = malloc(sizeof(void *) * list->len);
+        to_free = malloc(sizeof(void*) * list->len);
     }
 
     for (size_t i = 0; i < original_len; i++) {
@@ -97,12 +97,12 @@ void arraylist_remove(ArrayList *list, void *value_to_remove, CompareFunc cmp) {
     }
 }
 
-void *arraylist_get(ArrayList *list, size_t index) {
+void* arraylist_get(ArrayList* list, size_t index) {
     if (index >= list->len) return NULL;
     return list->items[index].value;
 }
 
-void arraylist_iterate(ArrayList *list, ArrayListCallback cb, void *user_context) {
+void arraylist_iterate(ArrayList* list, ArrayListCallback cb, void* user_context) {
     for (size_t i = 0; i < list->len; i++) {
         cb(&list->items[i], i, user_context);
     }

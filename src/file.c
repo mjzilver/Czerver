@@ -5,8 +5,8 @@
 #include <string.h>
 #include <sys/socket.h>
 
-char *read_file(const char *path) {
-    FILE *file = fopen(path, "r");
+char* read_file(const char* path) {
+    FILE* file = fopen(path, "r");
     if (file == NULL) {
         printf("Failed to open file: %s\n", path);
         return NULL;
@@ -19,7 +19,7 @@ char *read_file(const char *path) {
         return NULL;
     }
 
-    char *content = malloc(file_size + 1);
+    char* content = malloc(file_size + 1);
     if (content == NULL) {
         fclose(file);
         return NULL;
@@ -32,8 +32,8 @@ char *read_file(const char *path) {
     return content;
 }
 
-int create_file(const char *path, const char *content) {
-    FILE *file = fopen(path, "w");
+int create_file(const char* path, const char* content) {
+    FILE* file = fopen(path, "w");
     if (file == NULL) {
         printf("Failed to open file for writing: %s\n", path);
         return 1;

@@ -13,11 +13,11 @@
 #include "globals.h"
 #include "string_utils.h"
 
-Dict *routes_dict = NULL;
+Dict* routes_dict = NULL;
 
-char *join_url_path(const char *url_path, const char *name) {
+char* join_url_path(const char* url_path, const char* name) {
     size_t len;
-    char *result;
+    char* result;
 
     if (strcmp(url_path, "/") == 0) {
         len = 1 + strlen(name) + 1;
@@ -32,37 +32,37 @@ char *join_url_path(const char *url_path, const char *name) {
     return result;
 }
 
-void register_folder(const char *method, const char *url_path, const char *file_path) {
-    DIR *dir = opendir(file_path);
+void register_folder(const char* method, const char* url_path, const char* file_path) {
+    DIR* dir = opendir(file_path);
     assert(dir != NULL);
 
-    struct dirent *entry;
+    struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
 
         size_t full_len = strlen(file_path) + 1 + strlen(entry->d_name) + 1;
-        char *full_path = malloc(full_len);
+        char* full_path = malloc(full_len);
         snprintf(full_path, full_len, "%s/%s", file_path, entry->d_name);
 
         struct stat st;
         assert(stat(full_path, &st) != -1);
 
         if (S_ISDIR(st.st_mode)) {
-            char *sub_url_path = join_url_path(url_path, entry->d_name);
+            char* sub_url_path = join_url_path(url_path, entry->d_name);
 #if DEBUG
             printf("Recursively registering subfolder %s as %s\n", full_path, sub_url_path);
 #endif
             register_folder(method, sub_url_path, full_path);
             free(sub_url_path);
         } else if (S_ISREG(st.st_mode)) {
-            char *file_url_path = join_url_path(url_path, entry->d_name);
+            char* file_url_path = join_url_path(url_path, entry->d_name);
 #if DEBUG
             printf("Registering file: %s as URL path %s\n", full_path, file_url_path);
 #endif
             register_route(method, file_url_path, full_path);
 
             if (strcmp(entry->d_name, "index.html") == 0) {
-                char *dir_url_path;
+                char* dir_url_path;
                 if (strcmp(url_path, "/") == 0)
                     dir_url_path = strdup("/");
                 else {
@@ -87,8 +87,8 @@ void register_folder(const char *method, const char *url_path, const char *file_
     closedir(dir);
 }
 
-void register_route(const char *method, const char *url_path, const char *file_path) {
-    Route *route = malloc(sizeof(Route));
+void register_route(const char* method, const char* url_path, const char* file_path) {
+    Route* route = malloc(sizeof(Route));
     assert(route != NULL);
 
     strcpy(route->method, method);
@@ -123,8 +123,8 @@ void register_route(const char *method, const char *url_path, const char *file_p
     dict_set(routes_dict, url_path, route);
 }
 
-void register_api_route(const char *method, const char *url_path, ApiHandler handler) {
-    Route *route = malloc(sizeof(Route));
+void register_api_route(const char* method, const char* url_path, ApiHandler handler) {
+    Route* route = malloc(sizeof(Route));
     assert(route != NULL);
 
     strcpy(route->method, method);
@@ -142,16 +142,16 @@ void register_api_route(const char *method, const char *url_path, ApiHandler han
     dict_set(routes_dict, url_path, route);
 }
 
-void free_route(const char *key, void *value, void *user_context) {
+void free_route(const char* key, void* value, void* user_context) {
     (void)key;
     (void)user_context;
-    Route *route = value;
+    Route* route = value;
     if (route->cached_file) free(route->cached_file);
     free(route);
 }
 
-void unregister_route(const char *url_path) {
-    Route *route = DICT_GET_AS(Route, routes_dict, url_path);
+void unregister_route(const char* url_path) {
+    Route* route = DICT_GET_AS(Route, routes_dict, url_path);
     if (route != NULL) {
         free_route(url_path, route, NULL);
     }
@@ -166,7 +166,7 @@ void unregister_all_routes() {
     routes_dict = NULL;
 }
 
-char *get_type_header(FileType type) {
+char* get_type_header(FileType type) {
     switch (type) {
         case HTML_TYPE:
             return "text/html";
@@ -179,4 +179,4 @@ char *get_type_header(FileType type) {
     }
 }
 
-char *get_file_content(const char *path) { return read_file(path); }
+char* get_file_content(const char* path) { return read_file(path); }

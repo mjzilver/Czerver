@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-static inline size_t portable_strnlen(const char *s, size_t maxlen) {
+static inline size_t portable_strnlen(const char* s, size_t maxlen) {
     size_t i;
     for (i = 0; i < maxlen && s[i]; i++);
     return i;
 }
 
-static inline char* portable_strdup(const char *s) {
+static inline char* portable_strdup(const char* s) {
     if (!s) return NULL;
     size_t len = strlen(s) + 1;
     char* copy = malloc(len);
@@ -19,7 +19,7 @@ static inline char* portable_strdup(const char *s) {
     return copy;
 }
 
-static inline char* portable_strndup(const char *s, size_t n) {
+static inline char* portable_strndup(const char* s, size_t n) {
     if (!s) return NULL;
     size_t len = portable_strnlen(s, n);
     char* copy = malloc(len + 1);

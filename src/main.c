@@ -11,7 +11,7 @@
 #include "server.h"
 #include "string_utils.h"
 
-int main(int argc, char const *argv[]) {
+int main(int argc, char const* argv[]) {
     parse_json_config("./config.json");
 
     int port = cfg->port;
@@ -25,7 +25,7 @@ int main(int argc, char const *argv[]) {
     dict_set(var_dict, "item_two", "Second item");
     dict_set(var_dict, "item_three", "Third item");
 
-    ArrayList *todo_list = arraylist_new(4);
+    ArrayList* todo_list = arraylist_new(4);
     arraylist_append(todo_list, strdup("Clean room"), true);
     arraylist_append(todo_list, strdup("Get groceries"), true);
     arraylist_append(todo_list, strdup("Walk dog"), true);
@@ -42,7 +42,7 @@ int main(int argc, char const *argv[]) {
     pthread_t thread_id;
     int success_flag = 0;
 
-    ServerArgs *args = malloc(sizeof(ServerArgs));
+    ServerArgs* args = malloc(sizeof(ServerArgs));
     args->port = port;
     args->success_flag = &success_flag;
 

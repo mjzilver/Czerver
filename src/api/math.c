@@ -39,14 +39,14 @@ char* math_api_handler(const char* request_body) {
         result = (b != 0) ? a / b : 0;
     else
         return make_error(arena, "Invalid operator");
-    
-    MathResult m = { .result = result};
+
+    MathResult m = {.result = result};
 
     FieldDescriptor math_fields[] = {
         {"result", FIELD_NUMBER, offsetof(MathResult, result)},
     };
 
-    json_object *j = struct_to_json(arena, &m, math_fields, 1);
+    json_object* j = struct_to_json(arena, &m, math_fields, 1);
 
     return json_encode(j);
 }

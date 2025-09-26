@@ -5,7 +5,7 @@
 
 #define DEBUG 0
 
-extern Dict *var_dict;
-extern Config *cfg;
+extern Dict* var_dict;
+extern Config* cfg;
 
 #endif

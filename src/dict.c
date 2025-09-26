@@ -9,8 +9,8 @@
 #include "arena.h"
 #include "string_utils.h"
 
-Dict *dict_new(size_t initial_capacity) {
-    Dict *d = malloc(sizeof(Dict));
+Dict* dict_new(size_t initial_capacity) {
+    Dict* d = malloc(sizeof(Dict));
     assert(d != NULL);
 
     d->size = 0;
@@ -28,8 +28,8 @@ Dict *dict_new(size_t initial_capacity) {
     return d;
 }
 
-Dict *dict_arena_new(Arena *arena, size_t initial_capacity) {
-    Dict *d = arena_alloc(arena, sizeof(Dict));
+Dict* dict_arena_new(Arena* arena, size_t initial_capacity) {
+    Dict* d = arena_alloc(arena, sizeof(Dict));
 
     d->size = 0;
     d->capacity = initial_capacity;
@@ -45,7 +45,7 @@ Dict *dict_arena_new(Arena *arena, size_t initial_capacity) {
     return d;
 }
 
-void dict_free_all(Dict *d) {
+void dict_free_all(Dict* d) {
     if (d->arena) return;
 
     for (int i = 0; i < d->capacity; i++) {
@@ -59,7 +59,7 @@ void dict_free_all(Dict *d) {
 }
 
 // djb2 hash function
-unsigned int hash(const char *str) {
+unsigned int hash(const char* str) {
     unsigned int hash = 5381;
     int c;
 
@@ -72,7 +72,7 @@ unsigned int hash(const char *str) {
 
 int get_index(int hashed_key, size_t capacity) { return (hashed_key % capacity + capacity) % capacity; }
 
-void dict_set(Dict *d, const char *key, void *value) {
+void dict_set(Dict* d, const char* key, void* value) {
     dict_remove(d, key);
 
     int hashed_key = hash(key);
@@ -84,14 +84,14 @@ void dict_set(Dict *d, const char *key, void *value) {
     }
 }
 
-void *dict_get(Dict *d, const char *key) {
+void* dict_get(Dict* d, const char* key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
     return bucket_get(&d->buckets[idx], key);
 }
 
-void dict_remove(Dict *d, const char *key) {
+void dict_remove(Dict* d, const char* key) {
     int hashed_key = hash(key);
     int idx = get_index(hashed_key, d->capacity);
 
@@ -102,16 +102,16 @@ void dict_remove(Dict *d, const char *key) {
     }
 }
 
-void dict_iterate(Dict *d, DictCallback cb, void *user_context) {
+void dict_iterate(Dict* d, DictCallback cb, void* user_context) {
     for (int i = 0; i < d->capacity; i++) {
-        DictBucket *b = &d->buckets[i];
+        DictBucket* b = &d->buckets[i];
         for (int j = 0; j < b->size; j++) {
             cb(b->items[j].key, b->items[j].value, user_context);
         }
     }
 }
 
-void bucket_arena_set(DictBucket *b, Arena *arena, const char *key, void *value) {
+void bucket_arena_set(DictBucket* b, Arena* arena, const char* key, void* value) {
     DictItem di;
     di.key = arena_strdup(arena, key);
     di.value = value;
@@ -119,7 +119,7 @@ void bucket_arena_set(DictBucket *b, Arena *arena, const char *key, void *value)
 
     if (b->size >= b->capacity) {
         size_t new_capacity = b->capacity * 2;
-        DictItem *new_items = arena_alloc(arena, sizeof(DictItem) * new_capacity);
+        DictItem* new_items = arena_alloc(arena, sizeof(DictItem) * new_capacity);
         assert(new_items != NULL);
 
         memcpy(new_items, b->items, sizeof(DictItem) * b->size);
@@ -132,7 +132,7 @@ void bucket_arena_set(DictBucket *b, Arena *arena, const char *key, void *value)
     b->size++;
 }
 
-void bucket_set(DictBucket *b, const char *key, void *value) {
+void bucket_set(DictBucket* b, const char* key, void* value) {
     DictItem di;
     di.key = strdup(key);
     di.value = value;
@@ -148,7 +148,7 @@ void bucket_set(DictBucket *b, const char *key, void *value) {
     b->size++;
 }
 
-void *bucket_get(DictBucket *b, const char *key) {
+void* bucket_get(DictBucket* b, const char* key) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             return b->items[i].value;
@@ -157,7 +157,7 @@ void *bucket_get(DictBucket *b, const char *key) {
     return NULL;
 }
 
-void bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
+void bucket_remove_impl(DictBucket* b, const char* key, bool has_arena) {
     for (int i = 0; i < b->size; i++) {
         if (b->items[i].key != NULL && strcmp(b->items[i].key, key) == 0) {
             if (!has_arena) free(b->items[i].key);
@@ -176,11 +176,11 @@ void bucket_remove_impl(DictBucket *b, const char *key, bool has_arena) {
     }
 }
 
-void bucket_remove(DictBucket *b, const char *key) { bucket_remove_impl(b, key, false); }
+void bucket_remove(DictBucket* b, const char* key) { bucket_remove_impl(b, key, false); }
 
-void bucket_arena_remove(DictBucket *b, const char *key) { bucket_remove_impl(b, key, true); }
+void bucket_arena_remove(DictBucket* b, const char* key) { bucket_remove_impl(b, key, true); }
 
-void dict_print(Dict *d) {
+void dict_print(Dict* d) {
     printf("==== Dict Start ====\n");
     for (int i = 0; i < d->capacity; i++) {
         printf("Bucket %d (size=%zu): ", i, d->buckets[i].size);

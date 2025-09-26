@@ -15,7 +15,7 @@ Arena* get_fresh_request_arena() {
     return arena;
 }
 
-char* make_error(Arena *arena, const char* err_msg) {
+char* make_error(Arena* arena, const char* err_msg) {
     json_object* err_obj = arena_alloc(arena, sizeof(json_object));
     err_obj->type = JSON_OBJECT;
     err_obj->value.object = dict_arena_new(arena, 1);

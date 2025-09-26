@@ -9,8 +9,8 @@
 
 #include "arena.h"
 
-Buffer *buffer_new(size_t initial_size) {
-    Buffer *buf = malloc(sizeof(Buffer));
+Buffer* buffer_new(size_t initial_size) {
+    Buffer* buf = malloc(sizeof(Buffer));
     assert(buf != NULL);
     buf->data = malloc(initial_size);
     assert(buf->data != NULL);
@@ -22,8 +22,8 @@ Buffer *buffer_new(size_t initial_size) {
     return buf;
 }
 
-Buffer *buffer_arena_new(Arena *arena, size_t initial_size) {
-    Buffer *buf = arena_alloc(arena, (sizeof(Buffer)));
+Buffer* buffer_arena_new(Arena* arena, size_t initial_size) {
+    Buffer* buf = arena_alloc(arena, (sizeof(Buffer)));
     buf->data = arena_alloc(arena, initial_size);
     buf->data[0] = '\0';
     buf->size = initial_size;
@@ -33,13 +33,13 @@ Buffer *buffer_arena_new(Arena *arena, size_t initial_size) {
     return buf;
 }
 
-void buffer_resize(Buffer *buf, size_t needed_size) {
+void buffer_resize(Buffer* buf, size_t needed_size) {
     if (needed_size <= buf->size) return;
 
     size_t new_size = needed_size * 2;
 
     if (buf->arena) {
-        char *new_data = arena_alloc(buf->arena, new_size);
+        char* new_data = arena_alloc(buf->arena, new_size);
         if (!new_data) {
             fprintf(stderr, "Buffer resize failed: arena out of space\n");
             assert(0);
@@ -54,14 +54,14 @@ void buffer_resize(Buffer *buf, size_t needed_size) {
     buf->size = new_size;
 }
 
-void buffer_append(Buffer *buf, const char *content, size_t length) {
+void buffer_append(Buffer* buf, const char* content, size_t length) {
     buffer_resize(buf, buf->length + length + 1);
     memcpy(buf->data + buf->length, content, length);
     buf->length += length;
     buf->data[buf->length] = '\0';
 }
 
-void buffer_remove(Buffer *buf, size_t n) {
+void buffer_remove(Buffer* buf, size_t n) {
     if (n >= buf->length) {
         buf->length = 0;
     } else {
@@ -70,14 +70,14 @@ void buffer_remove(Buffer *buf, size_t n) {
     buf->data[buf->length] = '\0';
 }
 
-void buffer_free(Buffer *buf) {
+void buffer_free(Buffer* buf) {
     if (!buf) return;
     free(buf->data);
     free(buf);
 }
 
-char *buffer_take_data(Buffer *buf) {
-    char *data = buf->data;
+char* buffer_take_data(Buffer* buf) {
+    char* data = buf->data;
     free(buf);
     return data;
 }

@@ -3,11 +3,11 @@
 
 typedef struct {
     int port;
-    int *success_flag;
+    int* success_flag;
 } ServerArgs;
 
 int start_server(int port);
-void *start_server_wrapper(void *args);
+void* start_server_wrapper(void* args);
 void serve_routes(int client);
 
 #endif

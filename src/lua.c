@@ -11,27 +11,27 @@
 #include "globals.h"
 #include "string_utils.h"
 
-extern Dict *var_dict;
+extern Dict* var_dict;
 
-static void push_dict_to_lua(const char *key, void *value, void *user_context) {
-    lua_State *lua = (lua_State *)user_context;
-    lua_pushstring(lua, (const char *)value);
+static void push_dict_to_lua(const char* key, void* value, void* user_context) {
+    lua_State* lua = (lua_State*)user_context;
+    lua_pushstring(lua, (const char*)value);
     lua_setglobal(lua, key);
 }
 
-static int lua_dict_replace(lua_State *lua) {
-    const char *key = luaL_checkstring(lua, 1);
-    const char *value = luaL_checkstring(lua, 2);
+static int lua_dict_replace(lua_State* lua) {
+    const char* key = luaL_checkstring(lua, 1);
+    const char* value = luaL_checkstring(lua, 2);
 
     dict_set(var_dict, key, strdup(value));
     return 0;
 }
 
-static int lua_dict_arr_append(lua_State *lua) {
-    const char *list_name = luaL_checkstring(lua, 1);
-    const char *value = luaL_checkstring(lua, 2);
+static int lua_dict_arr_append(lua_State* lua) {
+    const char* list_name = luaL_checkstring(lua, 1);
+    const char* value = luaL_checkstring(lua, 2);
 
-    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
+    ArrayList* list = DICT_GET_AS(ArrayList, var_dict, list_name);
     if (!list) {
         list = arraylist_new(10);
         dict_set(var_dict, list_name, list);
@@ -42,10 +42,10 @@ static int lua_dict_arr_append(lua_State *lua) {
     return 0;
 }
 
-static int lua_dict_get_string(lua_State *lua) {
-    const char *key = luaL_checkstring(lua, 1);
+static int lua_dict_get_string(lua_State* lua) {
+    const char* key = luaL_checkstring(lua, 1);
 
-    char *str = DICT_GET_AS(char, var_dict, key);
+    char* str = DICT_GET_AS(char, var_dict, key);
     if (str) {
         lua_pushstring(lua, str);
     } else {
@@ -55,9 +55,9 @@ static int lua_dict_get_string(lua_State *lua) {
     return 1;
 }
 
-static int lua_dict_get_array(lua_State *lua) {
-    const char *key = luaL_checkstring(lua, 1);
-    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, key);
+static int lua_dict_get_array(lua_State* lua) {
+    const char* key = luaL_checkstring(lua, 1);
+    ArrayList* list = DICT_GET_AS(ArrayList, var_dict, key);
 
     if (!list) {
         lua_pushnil(lua);
@@ -67,31 +67,31 @@ static int lua_dict_get_array(lua_State *lua) {
     lua_newtable(lua);
     for (int i = 0; i < list->len; i++) {
         lua_pushinteger(lua, i + 1);
-        lua_pushstring(lua, (char *)list->items[i].value);
+        lua_pushstring(lua, (char*)list->items[i].value);
         lua_settable(lua, -3);
     }
 
     return 1;
 }
 
-static int lua_dict_arr_remove(lua_State *lua) {
-    const char *list_name = luaL_checkstring(lua, 1);
-    const char *value = luaL_checkstring(lua, 2);
+static int lua_dict_arr_remove(lua_State* lua) {
+    const char* list_name = luaL_checkstring(lua, 1);
+    const char* value = luaL_checkstring(lua, 2);
 
-    ArrayList *list = DICT_GET_AS(ArrayList, var_dict, list_name);
-    arraylist_remove(list, (void *)value, string_compare_function);
+    ArrayList* list = DICT_GET_AS(ArrayList, var_dict, list_name);
+    arraylist_remove(list, (void*)value, string_compare_function);
     return 0;
 }
 
-static int lua_redirect(lua_State *lua) {
-    const char *url = luaL_checkstring(lua, 1);
+static int lua_redirect(lua_State* lua) {
+    const char* url = luaL_checkstring(lua, 1);
     char redirect_buf[512];
     snprintf(redirect_buf, sizeof(redirect_buf), "REDIRECT:%s", url);
     lua_pushstring(lua, redirect_buf);
     return 1;
 }
 
-void decode_form_string(const char *src, char *dest) {
+void decode_form_string(const char* src, char* dest) {
     while (*src) {
         if (*src == '+') {
             *dest++ = ' ';
@@ -108,15 +108,15 @@ void decode_form_string(const char *src, char *dest) {
     *dest = '\0';
 }
 
-static void push_post_body_to_lua(lua_State *lua, const char *body) {
+static void push_post_body_to_lua(lua_State* lua, const char* body) {
     if (!body) return;
 
-    char *copy = strdup(body);
+    char* copy = strdup(body);
     if (!copy) return;
 
-    char *pair = strtok(copy, "&");
+    char* pair = strtok(copy, "&");
     while (pair) {
-        char *eq = strchr(pair, '=');
+        char* eq = strchr(pair, '=');
         if (eq) {
             *eq = '\0';
 
@@ -134,8 +134,8 @@ static void push_post_body_to_lua(lua_State *lua, const char *body) {
     free(copy);
 }
 
-char *execute_lua(const char *lua_file, const char *post_body) {
-    lua_State *lua = luaL_newstate();
+char* execute_lua(const char* lua_file, const char* post_body) {
+    lua_State* lua = luaL_newstate();
     luaL_openlibs(lua);
 
     dict_iterate(var_dict, push_dict_to_lua, lua);
@@ -177,8 +177,8 @@ char *execute_lua(const char *lua_file, const char *post_body) {
         return strdup("Internal Server Error");
     }
 
-    const char *result = lua_tostring(lua, -1);
-    char *ret = strdup(result ? result : "");
+    const char* result = lua_tostring(lua, -1);
+    char* ret = strdup(result ? result : "");
     lua_pop(lua, 1);
     lua_close(lua);
 

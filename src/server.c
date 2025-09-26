@@ -13,24 +13,24 @@
 #include "http_codes.h"
 #include "lua.h"
 #include "route.h"
-#include "template.h"
 #include "string_utils.h"
+#include "template.h"
 
-extern Dict *var_dict;
+extern Dict* var_dict;
 
 struct sockaddr_in addr;
 
-struct sockaddr_in *create_address(int port) {
+struct sockaddr_in* create_address(int port) {
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     return &addr;
 }
 
-void *start_server_wrapper(void *args) {
-    ServerArgs *server_args = (ServerArgs *)args;
+void* start_server_wrapper(void* args) {
+    ServerArgs* server_args = (ServerArgs*)args;
     int port = server_args->port;
-    int *success_flag = server_args->success_flag;
+    int* success_flag = server_args->success_flag;
 
     *success_flag = (start_server(port) == 0);
 
@@ -50,9 +50,9 @@ int start_server(int port) {
         return 1;
     }
 
-    struct sockaddr_in *adrr = create_address(port);
+    struct sockaddr_in* adrr = create_address(port);
 
-    if (bind(sock, (struct sockaddr *)adrr, sizeof(*adrr)) < 0) {
+    if (bind(sock, (struct sockaddr*)adrr, sizeof(*adrr)) < 0) {
         perror("Failed to bind the socket");
         return 1;
     }
@@ -80,13 +80,13 @@ int start_server(int port) {
     return 0;
 }
 
-static char *extract_path(const char *buffer) {
+static char* extract_path(const char* buffer) {
     char path[256];
     sscanf(buffer, "%*s %s HTTP/1.1", path);
     return strdup(path);
 }
 
-static void send_response(int client, const char *body, const char *content_type) {
+static void send_response(int client, const char* body, const char* content_type) {
     if (!body) body = "";
     if (!content_type) content_type = "text/plain";
 
@@ -110,7 +110,7 @@ static void send_response(int client, const char *body, const char *content_type
     send(client, response, strlen(response), 0);
 }
 
-static void send_redirect(int client, const char *url) {
+static void send_redirect(int client, const char* url) {
     char response[512];
     snprintf(response, sizeof(response), "%sLocation: %s\r\n\r\n", HTTP_302, url);
 
@@ -121,27 +121,27 @@ static void send_redirect(int client, const char *url) {
     send(client, response, strlen(response), 0);
 }
 
-static void handle_static_route_request(int client, const char *buffer, const char *method, Route *route) {
+static void handle_static_route_request(int client, const char* buffer, const char* method, Route* route) {
     if (strcmp(method, "GET") == 0) {
-        char *file_content = NULL;
+        char* file_content = NULL;
 
         if (route->type == LUA_TYPE) {
-            char *response_body = execute_lua(route->cached_file, NULL);
+            char* response_body = execute_lua(route->cached_file, NULL);
             file_content = process_template(response_body);
             send_response(client, file_content, get_type_header(HTML_TYPE));
         } else {
             file_content = process_template(route->cached_file);
-            char *type_header = get_type_header(route->type);
+            char* type_header = get_type_header(route->type);
             send_response(client, file_content, type_header);
         }
         free(file_content);
     } else if (strcmp(method, "POST") == 0) {
-        char *body = strstr(buffer, "\r\n\r\n");
+        char* body = strstr(buffer, "\r\n\r\n");
         if (body) body += 4;
-        char *response_body = execute_lua(route->cached_file, body);
+        char* response_body = execute_lua(route->cached_file, body);
 
         if (strncmp(response_body, "REDIRECT:", 9) == 0) {
-            const char *url = response_body + 9;
+            const char* url = response_body + 9;
             send_redirect(client, url);
         } else {
             send_response(client, response_body, "text/html");
@@ -152,24 +152,24 @@ static void handle_static_route_request(int client, const char *buffer, const ch
     }
 }
 
-static void handle_api_route_request(int client, const char *buffer, const char *method, Route *route) {
+static void handle_api_route_request(int client, const char* buffer, const char* method, Route* route) {
     (void)method;
-    char *body = strstr(buffer, "\r\n\r\n");
+    char* body = strstr(buffer, "\r\n\r\n");
     if (body) body += 4;
 
-    char *response_json = route->handler(body);
+    char* response_json = route->handler(body);
     send_response(client, response_json, "application/json");
     free(response_json);
 }
 
-void send_404(char *path, int client) {
-    char *body = NULL;
-    Route *route = DICT_GET_AS(Route, routes_dict, "/404.html");
+void send_404(char* path, int client) {
+    char* body = NULL;
+    Route* route = DICT_GET_AS(Route, routes_dict, "/404.html");
     if (route != NULL) {
         dict_set(var_dict, "current_path", strdup(path));
         body = process_template(route->cached_file);
     } else {
-        const char *default_body_fmt = "<h1>404 Not Found</h1><p>%s not found</p>";
+        const char* default_body_fmt = "<h1>404 Not Found</h1><p>%s not found</p>";
         size_t needed = snprintf(NULL, 0, default_body_fmt, path) + 1;
         body = malloc(needed);
         snprintf(body, needed, default_body_fmt, path);
@@ -197,9 +197,9 @@ void send_404(char *path, int client) {
     free(body);
 }
 
-static void handle_request(int client, const char *buffer, const char *method) {
-    char *path = extract_path(buffer);
-    Route *route = DICT_GET_AS(Route, routes_dict, path);
+static void handle_request(int client, const char* buffer, const char* method) {
+    char* path = extract_path(buffer);
+    Route* route = DICT_GET_AS(Route, routes_dict, path);
 
     if (!route || strcmp(route->method, method) != 0) {
         send_404(path, client);
