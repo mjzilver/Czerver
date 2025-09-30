@@ -15,8 +15,6 @@ typedef enum {
     JSON_NULL      // NULL
 } json_type;
 
-struct json_object;
-
 typedef union {
     char* string;
     double number;
@@ -31,16 +29,16 @@ typedef struct json_object {
 } json_object;
 
 typedef enum json_token_type {
-    LEFT_BRACE,     // {
-    RIGHT_BRACE,    // }
-    LEFT_BRACKET,   // [
-    RIGHT_BRACKET,  // ]
-    COLON,          // :
-    COMMA,          // ,
-    STRING,         // "text" or 'text'
-    NUMBER,         // 123, 45.67, -89
-    BOOLEAN,        // true or false
-    NULL_TOKEN      // null
+    LEFT_BRACE_TOKEN,     // {
+    RIGHT_BRACE_TOKEN,    // }
+    LEFT_BRACKET_TOKEN,   // [
+    RIGHT_BRACKET_TOKEN,  // ]
+    COLON_TOKEN,          // :
+    COMMA_TOKEN,          // ,
+    STRING_TOKEN,         // "text" or 'text'
+    NUMBER_TOKEN,         // 123, 45.67, -89
+    BOOLEAN_TOKEN,        // true or false
+    NULL_TOKEN            // null
 } json_token_type;
 
 typedef struct json_token {

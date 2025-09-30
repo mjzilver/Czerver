@@ -24,23 +24,23 @@ Arena* get_json_arena() {
 
 char* get_string_token_type(json_token_type tt) {
     switch (tt) {
-        case LEFT_BRACE:
+        case LEFT_BRACE_TOKEN:
             return "{";
-        case RIGHT_BRACE:
+        case RIGHT_BRACE_TOKEN:
             return "}";
-        case LEFT_BRACKET:
+        case LEFT_BRACKET_TOKEN:
             return "[";
-        case RIGHT_BRACKET:
+        case RIGHT_BRACKET_TOKEN:
             return "]";
-        case COLON:
+        case COLON_TOKEN:
             return ":";
-        case COMMA:
+        case COMMA_TOKEN:
             return ",";
-        case STRING:
+        case STRING_TOKEN:
             return "STRING";
-        case NUMBER:
+        case NUMBER_TOKEN:
             return "NUMBER";
-        case BOOLEAN:
+        case BOOLEAN_TOKEN:
             return "BOOLEAN";
         case NULL_TOKEN:
             return "NULL";
@@ -51,7 +51,7 @@ char* get_string_token_type(json_token_type tt) {
 
 json_token* parse_json_string(const char* json_string, size_t* i, const char QUOTE_CHAR) {
     json_token* tok = arena_alloc(get_json_arena(), (sizeof(json_token)));
-    tok->type = STRING;
+    tok->type = STRING_TOKEN;
 
     Buffer* buff = buffer_arena_new(get_json_arena(), 100);
     size_t len = strlen(json_string);
@@ -77,7 +77,7 @@ json_token* parse_json_string(const char* json_string, size_t* i, const char QUO
 
 json_token* parse_json_number(const char* json_string, size_t* i) {
     json_token* tok = arena_alloc(get_json_arena(), sizeof(json_token));
-    tok->type = NUMBER;
+    tok->type = NUMBER_TOKEN;
 
     const char* start_ptr = json_string + *i;
     char* end_ptr;
@@ -116,32 +116,32 @@ ArrayList* json_tokenize(const char* json_string) {
 
         // Special characters
         if (c == '{') {
-            append_single_char_token(tokens, LEFT_BRACE);
+            append_single_char_token(tokens, LEFT_BRACE_TOKEN);
             i++;
             continue;
         }
         if (c == '}') {
-            append_single_char_token(tokens, RIGHT_BRACE);
+            append_single_char_token(tokens, RIGHT_BRACE_TOKEN);
             i++;
             continue;
         }
         if (c == '[') {
-            append_single_char_token(tokens, LEFT_BRACKET);
+            append_single_char_token(tokens, LEFT_BRACKET_TOKEN);
             i++;
             continue;
         }
         if (c == ']') {
-            append_single_char_token(tokens, RIGHT_BRACKET);
+            append_single_char_token(tokens, RIGHT_BRACKET_TOKEN);
             i++;
             continue;
         }
         if (c == ':') {
-            append_single_char_token(tokens, COLON);
+            append_single_char_token(tokens, COLON_TOKEN);
             i++;
             continue;
         }
         if (c == ',') {
-            append_single_char_token(tokens, COMMA);
+            append_single_char_token(tokens, COMMA_TOKEN);
             i++;
             continue;
         }
@@ -170,7 +170,7 @@ ArrayList* json_tokenize(const char* json_string) {
         }
         if (i + 3 < len && strncmp(json_string + i, "true", 4) == 0) {
             json_token* tok = arena_alloc(get_json_arena(), sizeof(json_token));
-            tok->type = BOOLEAN;
+            tok->type = BOOLEAN_TOKEN;
             tok->value.boolean = true;
             arraylist_append(tokens, tok, false);
             i += 4;
@@ -178,7 +178,7 @@ ArrayList* json_tokenize(const char* json_string) {
         }
         if (i + 4 < len && strncmp(json_string + i, "false", 5) == 0) {
             json_token* tok = arena_alloc(get_json_arena(), sizeof(json_token));
-            tok->type = BOOLEAN;
+            tok->type = BOOLEAN_TOKEN;
             tok->value.boolean = false;
             arraylist_append(tokens, tok, false);
             i += 5;
@@ -192,21 +192,21 @@ ArrayList* json_tokenize(const char* json_string) {
     return tokens;
 }
 
-json_object* proces_value_type(json_token* tok) {
+json_object* process_value_type(json_token* tok) {
     json_object* obj = arena_alloc(get_json_arena(), sizeof(json_object));
 
     switch (tok->type) {
-        case STRING: {
+        case STRING_TOKEN: {
             obj->type = JSON_STRING;
             obj->value.string = tok->value.string;
             return obj;
         }
-        case NUMBER: {
+        case NUMBER_TOKEN: {
             obj->type = JSON_NUMBER;
             obj->value.number = tok->value.number;
             return obj;
         }
-        case BOOLEAN: {
+        case BOOLEAN_TOKEN: {
             obj->type = JSON_BOOLEAN;
             obj->value.boolean = tok->value.boolean;
         }
@@ -232,12 +232,12 @@ json_object* process_object_tokens(ArrayList* tokens, size_t* i) {
         json_token* tok = arraylist_get(tokens, *i);
 
         // Empty object
-        if (tok->type == RIGHT_BRACE) {
+        if (tok->type == RIGHT_BRACE_TOKEN) {
             (*i)++;
             return obj;
         }
 
-        if (tok->type != STRING) {
+        if (tok->type != STRING_TOKEN) {
             fprintf(stderr, "Error: expected string key, got %s\n", get_string_token_type(tok->type));
             return NULL;
         }
@@ -245,7 +245,7 @@ json_object* process_object_tokens(ArrayList* tokens, size_t* i) {
         (*i)++;
 
         tok = arraylist_get(tokens, *i);
-        if (tok->type != COLON) {
+        if (tok->type != COLON_TOKEN) {
             fprintf(stderr, "Error: expected ':' after key\n");
             return NULL;
         }
@@ -257,10 +257,10 @@ json_object* process_object_tokens(ArrayList* tokens, size_t* i) {
         dict_set(obj->value.object, key, value);
 
         tok = arraylist_get(tokens, *i);
-        if (tok->type == COMMA) {
+        if (tok->type == COMMA_TOKEN) {
             (*i)++;  // skip comma
             continue;
-        } else if (tok->type == RIGHT_BRACE) {
+        } else if (tok->type == RIGHT_BRACE_TOKEN) {
             (*i)++;  // consuming }
             break;
         } else {
@@ -283,7 +283,7 @@ json_object* process_array_tokens(ArrayList* tokens, size_t* i) {
         json_token* tok = arraylist_get(tokens, *i);
 
         // Empty array
-        if (tok->type == RIGHT_BRACKET) {
+        if (tok->type == RIGHT_BRACKET_TOKEN) {
             (*i)++;  // consume ]
             return obj;
         }
@@ -296,10 +296,10 @@ json_object* process_array_tokens(ArrayList* tokens, size_t* i) {
         arraylist_append(obj->value.array, element, false);
 
         tok = arraylist_get(tokens, *i);
-        if (tok->type == COMMA) {
+        if (tok->type == COMMA_TOKEN) {
             (*i)++;  // skip comma
             continue;
-        } else if (tok->type == RIGHT_BRACKET) {
+        } else if (tok->type == RIGHT_BRACKET_TOKEN) {
             (*i)++;  // Consume closing ]
             break;
         } else {
@@ -315,14 +315,14 @@ json_object* process_tokens(ArrayList* tokens, size_t* i) {
     json_token* tok = arraylist_get(tokens, *i);
 
     switch (tok->type) {
-        case LEFT_BRACE:
+        case LEFT_BRACE_TOKEN:
             return process_object_tokens(tokens, i);
-        case LEFT_BRACKET:
+        case LEFT_BRACKET_TOKEN:
             return process_array_tokens(tokens, i);
-        case BOOLEAN:
-        case STRING:
-        case NUMBER: {
-            json_object* obj = proces_value_type(tok);
+        case BOOLEAN_TOKEN:
+        case STRING_TOKEN:
+        case NUMBER_TOKEN: {
+            json_object* obj = process_value_type(tok);
             (*i)++;
             return obj;
         }
