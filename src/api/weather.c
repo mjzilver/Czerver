@@ -5,18 +5,18 @@
 #include "../json_utils.h"
 #include "api_utils.h"
 
-typedef struct {
+typedef struct Temperature {
     double low;
     double high;
 } Temperature;
 
-typedef struct {
+typedef struct WeatherDay {
     const char* date;
     char* cond;
     Temperature temp;
 } WeatherDay;
 
-typedef struct {
+typedef struct WeatherForecast {
     const char* location;
     size_t num_days;
     ArrayList* days;

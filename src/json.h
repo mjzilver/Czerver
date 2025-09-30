@@ -23,7 +23,7 @@ typedef union {
     Dict* object;
 } JsonValue;
 
-typedef struct {
+typedef struct JsonValueNode {
     JsonType type;
     JsonValue value;
 } JsonValueNode;
@@ -41,7 +41,7 @@ typedef enum {
     JSON_TOKEN_NULL            // null
 } JsonTokenType;
 
-typedef struct {
+typedef struct JsonToken {
     JsonTokenType type;
     JsonValue value;
 } JsonToken;

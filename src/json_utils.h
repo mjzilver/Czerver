@@ -23,7 +23,7 @@ typedef enum { FIELD_TYPE_STRING, FIELD_TYPE_NUMBER, FIELD_TYPE_ARRAY, FIELD_TYP
 
 typedef struct FieldDescriptor FieldDescriptor;
 
-typedef struct {
+typedef struct ObjectMeta {
     const FieldDescriptor* fields;
     size_t field_count;
 } ObjectMeta;

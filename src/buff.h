@@ -5,7 +5,7 @@
 
 #include "arena.h"
 
-typedef struct {
+typedef struct Buffer {
     char* data;
     size_t size;
     size_t length;

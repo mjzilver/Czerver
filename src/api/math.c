@@ -7,7 +7,7 @@
 #include "../json_utils.h"
 #include "api_utils.h"
 
-typedef struct {
+typedef struct MathResult {
     double result;
 } MathResult;
 

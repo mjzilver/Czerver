@@ -379,7 +379,7 @@ void buffer_append_escaped_string(Buffer* buf, const char* str) {
 // Forward declare
 void json_encode_to_buffer(const JsonValueNode* obj, Buffer* buf);
 
-typedef struct {
+typedef struct EncodeContext {
     Buffer* buf;
     bool first;
 } EncodeContext;
