@@ -3,51 +3,51 @@
 #include "../src/json.h"
 
 START_TEST(test_encode_string) {
-    json_object obj = {.type = JSON_STRING, .value.string = "hello"};
+    JsonValueNode obj = {.type = JSON_STRING, .value.string = "hello"};
 
-    char *encoded = json_encode(&obj);
+    char *encoded = json_stringify(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "\"hello\"");
 
-    json_free();
+    json_arena_free();
     free(encoded);
 }
 END_TEST
 
 START_TEST(test_encode_number) {
-    json_object obj = {.type = JSON_NUMBER, .value.number = 42.0};
+    JsonValueNode obj = {.type = JSON_NUMBER, .value.number = 42.0};
 
-    char *encoded = json_encode(&obj);
+    char *encoded = json_stringify(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "42");
 
-    json_free();
+    json_arena_free();
     free(encoded);
 }
 END_TEST
 
 START_TEST(test_encode_null) {
-    json_object obj = {.type = JSON_NULL};
+    JsonValueNode obj = {.type = JSON_NULL};
 
-    char *encoded = json_encode(&obj);
+    char *encoded = json_stringify(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "null");
 
-    json_free();
+    json_arena_free();
     free(encoded);
 }
 END_TEST
 
 START_TEST(test_encode_array) {
-    json_object *a = malloc(sizeof(json_object));
+    JsonValueNode *a = malloc(sizeof(JsonValueNode));
     a->type = JSON_NUMBER;
     a->value.number = 1;
 
-    json_object *b = malloc(sizeof(json_object));
+    JsonValueNode *b = malloc(sizeof(JsonValueNode));
     b->type = JSON_NUMBER;
     b->value.number = 2;
 
-    json_object *c = malloc(sizeof(json_object));
+    JsonValueNode *c = malloc(sizeof(JsonValueNode));
     c->type = JSON_NUMBER;
     c->value.number = 3;
 
@@ -56,26 +56,26 @@ START_TEST(test_encode_array) {
     arraylist_append(arr, b, true);
     arraylist_append(arr, c, true);
 
-    json_object obj;
+    JsonValueNode obj;
     obj.type = JSON_ARRAY;
     obj.value.array = arr;
 
-    char *encoded = json_encode(&obj);
+    char *encoded = json_stringify(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "[1,2,3]");
 
-    json_free();
+    json_arena_free();
     arraylist_free(arr);
     free(encoded);
 }
 END_TEST
 
 START_TEST(test_encode_object) {
-    json_object *a = malloc(sizeof(json_object));
+    JsonValueNode *a = malloc(sizeof(JsonValueNode));
     a->type = JSON_NUMBER;
     a->value.number = 1;
 
-    json_object *b = malloc(sizeof(json_object));
+    JsonValueNode *b = malloc(sizeof(JsonValueNode));
     b->type = JSON_NUMBER;
     b->value.number = 2;
 
@@ -83,15 +83,15 @@ START_TEST(test_encode_object) {
     dict_set(dict, "a", a);
     dict_set(dict, "b", b);
 
-    json_object obj;
+    JsonValueNode obj;
     obj.type = JSON_OBJECT;
     obj.value.object = dict;
 
-    char *encoded = json_encode(&obj);
+    char *encoded = json_stringify(&obj);
     ck_assert_ptr_nonnull(encoded);
     ck_assert_str_eq(encoded, "{\"a\":1,\"b\":2}");
 
-    json_free();
+    json_arena_free();
     dict_free_all(dict);
     free(a);
     free(b);

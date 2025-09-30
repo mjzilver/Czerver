@@ -127,10 +127,10 @@ static void handle_static_route_request(int client, const char* buffer, const ch
 
         if (route->type == LUA_TYPE) {
             char* response_body = execute_lua(route->cached_file, NULL);
-            file_content = process_template(response_body);
+            file_content = parse_template(response_body);
             send_response(client, file_content, get_type_header(HTML_TYPE));
         } else {
-            file_content = process_template(route->cached_file);
+            file_content = parse_template(route->cached_file);
             char* type_header = get_type_header(route->type);
             send_response(client, file_content, type_header);
         }
@@ -167,7 +167,7 @@ void send_404(char* path, int client) {
     Route* route = DICT_GET_AS(Route, routes_dict, "/404.html");
     if (route != NULL) {
         dict_set(var_dict, "current_path", strdup(path));
-        body = process_template(route->cached_file);
+        body = parse_template(route->cached_file);
     } else {
         const char* default_body_fmt = "<h1>404 Not Found</h1><p>%s not found</p>";
         size_t needed = snprintf(NULL, 0, default_body_fmt, path) + 1;

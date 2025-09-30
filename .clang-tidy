@@ -3,12 +3,13 @@ Checks: >
   readability-identifier-naming,
   misc-unused-parameters,
   clang-diagnostic-unused-variable,
-  clang-diagnostic-unused-parameter
+  clang-diagnostic-unused-parameter,
+  clang-diagnostic-unused-function,
+  clang-diagnostic-unused-but-set-variable
 
 CheckOptions:
   - key: readability-identifier-naming.ConstantCase
     value: UPPER_CASE
-
   - key: readability-identifier-naming.VariableCase
     value: lower_case
   - key: readability-identifier-naming.MemberCase

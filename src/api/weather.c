@@ -22,7 +22,6 @@ typedef struct {
     ArrayList* days;
 } WeatherForecast;
 
-
 char* weather_api_handler(const char* request_body) {
     (void)request_body;
 
@@ -34,26 +33,27 @@ char* weather_api_handler(const char* request_body) {
 
     ArrayList* days_list = arraylist_arena_new(arena, FIELD_COUNT(days_arr));
 
-    FieldDescriptor temperature_fields[] = {{"low", FIELD_NUMBER, offsetof(Temperature, low)},
-                                            {"high", FIELD_NUMBER, offsetof(Temperature, high)}};
+    FieldDescriptor temperature_fields[] = {{"low", FIELD_TYPE_NUMBER, offsetof(Temperature, low)},
+                                            {"high", FIELD_TYPE_NUMBER, offsetof(Temperature, high)}};
 
     ObjectMeta object_meta = {.fields = temperature_fields, .field_count = FIELD_COUNT(temperature_fields)};
 
-    FieldDescriptor day_fields[] = {{"date", FIELD_STRING, offsetof(WeatherDay, date)},
-                                    {"cond", FIELD_STRING, offsetof(WeatherDay, cond)},
-                                    {"temp", FIELD_OBJECT, offsetof(WeatherDay, temp), .object = &object_meta}};
+    FieldDescriptor day_fields[] = {{"date", FIELD_TYPE_STRING, offsetof(WeatherDay, date)},
+                                    {"cond", FIELD_TYPE_STRING, offsetof(WeatherDay, cond)},
+                                    {"temp", FIELD_TYPE_OBJECT, offsetof(WeatherDay, temp), .object = &object_meta}};
 
     for (size_t i = 0; i < 3; i++) {
-        json_object* day_obj = struct_to_json(arena, &days_arr[i], day_fields, FIELD_COUNT(day_fields));
+        JsonValueNode* day_obj = struct_to_json_value_node(arena, &days_arr[i], day_fields, FIELD_COUNT(day_fields));
         arraylist_append(days_list, day_obj, 1);
     }
 
     WeatherForecast forecast = {.location = "Leiden", .days = days_list};
 
-    FieldDescriptor forecast_fields[] = {{"location", FIELD_STRING, offsetof(WeatherForecast, location)},
-                                         {"days", FIELD_ARRAY, offsetof(WeatherForecast, days), .array = days_list}};
+    FieldDescriptor forecast_fields[] = {
+        {"location", FIELD_TYPE_STRING, offsetof(WeatherForecast, location)},
+        {"days", FIELD_TYPE_ARRAY, offsetof(WeatherForecast, days), .array = days_list}};
 
-    json_object* resp = struct_to_json(arena, &forecast, forecast_fields, FIELD_COUNT(forecast_fields));
+    JsonValueNode* resp = struct_to_json_value_node(arena, &forecast, forecast_fields, FIELD_COUNT(forecast_fields));
 
-    return json_encode(resp);
+    return json_stringify(resp);
 }

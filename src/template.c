@@ -173,7 +173,7 @@ Buffer* parse_parent_template(const char* template_content) {
     return processed_content;
 }
 
-char* process_template(const char* template_content) {
+char* parse_template(const char* template_content) {
     char* content = strdup(template_content);
 
     while (strstr(content, PARENT_DELIM_START) != NULL) {

@@ -13,7 +13,7 @@ typedef enum {
     JSON_ARRAY,    // []
     JSON_OBJECT,   // {}
     JSON_NULL      // NULL
-} json_type;
+} JsonType;
 
 typedef union {
     char* string;
@@ -21,35 +21,35 @@ typedef union {
     bool boolean;
     ArrayList* array;
     Dict* object;
-} json_value;
+} JsonValue;
 
-typedef struct json_object {
-    json_type type;
-    json_value value;
-} json_object;
+typedef struct {
+    JsonType type;
+    JsonValue value;
+} JsonValueNode;
 
-typedef enum json_token_type {
-    LEFT_BRACE_TOKEN,     // {
-    RIGHT_BRACE_TOKEN,    // }
-    LEFT_BRACKET_TOKEN,   // [
-    RIGHT_BRACKET_TOKEN,  // ]
-    COLON_TOKEN,          // :
-    COMMA_TOKEN,          // ,
-    STRING_TOKEN,         // "text" or 'text'
-    NUMBER_TOKEN,         // 123, 45.67, -89
-    BOOLEAN_TOKEN,        // true or false
-    NULL_TOKEN            // null
-} json_token_type;
+typedef enum {
+    JSON_TOKEN_LEFT_BRACE,     // {
+    JSON_TOKEN_RIGHT_BRACE,    // }
+    JSON_TOKEN_LEFT_BRACKET,   // [
+    JSON_TOKEN_RIGHT_BRACKET,  // ]
+    JSON_TOKEN_COLON,          // :
+    JSON_TOKEN_COMMA,          // ,
+    JSON_TOKEN_STRING,         // "text" or 'text'
+    JSON_TOKEN_NUMBER,         // 123, 45.67, -89
+    JSON_TOKEN_BOOLEAN,        // true or false
+    JSON_TOKEN_NULL            // null
+} JsonTokenType;
 
-typedef struct json_token {
-    json_token_type type;
-    json_value value;
-} json_token;
+typedef struct {
+    JsonTokenType type;
+    JsonValue value;
+} JsonToken;
 
-ArrayList* json_tokenize(const char* json_string);
-json_object* json_decode(const char* json_string);
-char* json_encode(const json_object* obj);
+ArrayList* json_lex_string(const char* json_string);
+JsonValueNode* json_parse_string(const char* json_string);
+char* json_stringify(const JsonValueNode* obj);
 
-void json_free();
+void json_arena_free();
 
 #endif

@@ -20,16 +20,16 @@ typedef struct ConfigKey {
 } ConfigKey;
 
 void parse_file_content(const char* content) {
-    json_object* config_json = json_decode(content);
+    JsonValueNode* config_json = json_parse_string(content);
     Dict* server_obj = config_json->value.object;
-    Dict* server = ((json_object*)dict_get(server_obj, "server"))->value.object;
+    Dict* server = ((JsonValueNode*)dict_get(server_obj, "server"))->value.object;
 
-    cfg->port = ((json_object*)dict_get(server, "port"))->value.number;
-    cfg->get_dir = ((json_object*)dict_get(server, "get_dir"))->value.string;
-    cfg->post_dir = ((json_object*)dict_get(server, "post_dir"))->value.string;
-    cfg->site_title = ((json_object*)dict_get(server, "site_title"))->value.string;
+    cfg->port = ((JsonValueNode*)dict_get(server, "port"))->value.number;
+    cfg->get_dir = ((JsonValueNode*)dict_get(server, "get_dir"))->value.string;
+    cfg->post_dir = ((JsonValueNode*)dict_get(server, "post_dir"))->value.string;
+    cfg->site_title = ((JsonValueNode*)dict_get(server, "site_title"))->value.string;
 
-    json_free();
+    json_arena_free();
 }
 
 static const char* default_config =

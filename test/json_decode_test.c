@@ -3,42 +3,42 @@
 
 START_TEST(test_decode_string) {
     const char *input = "\"hello\"";
-    json_object *obj = json_decode(input);
+    JsonValueNode *obj = json_parse_string(input);
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_STRING);
     ck_assert_str_eq(obj->value.string, "hello");
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_decode_number) {
     const char *input = "42";
-    json_object *obj = json_decode(input);
+    JsonValueNode *obj = json_parse_string(input);
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_NUMBER);
     ck_assert_double_eq_tol(obj->value.number, 42.0, 1e-9);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_decode_null) {
     const char *input = "null";
-    json_object *obj = json_decode(input);
+    JsonValueNode *obj = json_parse_string(input);
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_NULL);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_decode_array) {
     const char *input = "[1,2,3]";
-    json_object *obj = json_decode(input);
+    JsonValueNode *obj = json_parse_string(input);
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_ARRAY);
@@ -51,33 +51,33 @@ START_TEST(test_decode_array) {
         ck_assert_ptr_nonnull(item);
         ck_assert_ptr_nonnull(item->value);
 
-        json_object *elem = (json_object *)arraylist_get(arr, i);
+        JsonValueNode *elem = (JsonValueNode *)arraylist_get(arr, i);
         ck_assert_int_eq(elem->type, JSON_NUMBER);
         ck_assert_double_eq_tol(elem->value.number, (double)(i + 1), 1e-9);
     }
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_decode_object) {
     const char *input = "{\"a\":1,\"b\":2}";
-    json_object *obj = json_decode(input);
+    JsonValueNode *obj = json_parse_string(input);
 
     ck_assert_ptr_nonnull(obj);
     ck_assert_int_eq(obj->type, JSON_OBJECT);
 
-    json_object *val_a = (json_object *)dict_get(obj->value.object, "a");
+    JsonValueNode *val_a = (JsonValueNode *)dict_get(obj->value.object, "a");
     ck_assert_ptr_nonnull(val_a);
     ck_assert_int_eq(val_a->type, JSON_NUMBER);
     ck_assert_double_eq_tol(val_a->value.number, 1.0, 1e-9);
 
-    json_object *val_b = (json_object *)dict_get(obj->value.object, "b");
+    JsonValueNode *val_b = (JsonValueNode *)dict_get(obj->value.object, "b");
     ck_assert_ptr_nonnull(val_b);
     ck_assert_int_eq(val_b->type, JSON_NUMBER);
     ck_assert_double_eq_tol(val_b->value.number, 2.0, 1e-9);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 

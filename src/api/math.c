@@ -14,16 +14,16 @@ typedef struct {
 char* math_api_handler(const char* request_body) {
     Arena* arena = get_fresh_request_arena();
 
-    json_object* req = json_decode(request_body);
+    JsonValueNode* req = json_parse_string(request_body);
     if (!req || req->type != JSON_OBJECT) {
         return make_error(arena, "Invalid JSON");
     }
 
     Dict* obj = req->value.object;
 
-    double a = get_number(obj, "a");
-    double b = get_number(obj, "b");
-    const char* op = get_string(obj, "op");
+    double a = json_value_node_get_number(obj, "a");
+    double b = json_value_node_get_number(obj, "b");
+    const char* op = json_value_node_get_string(obj, "op");
 
     double result = 0;
 
@@ -43,10 +43,10 @@ char* math_api_handler(const char* request_body) {
     MathResult m = {.result = result};
 
     FieldDescriptor math_fields[] = {
-        {"result", FIELD_NUMBER, offsetof(MathResult, result)},
+        {"result", FIELD_TYPE_NUMBER, offsetof(MathResult, result)},
     };
 
-    json_object* j = struct_to_json(arena, &m, math_fields, 1);
+    JsonValueNode* j = struct_to_json_value_node(arena, &m, math_fields, 1);
 
-    return json_encode(j);
+    return json_stringify(j);
 }

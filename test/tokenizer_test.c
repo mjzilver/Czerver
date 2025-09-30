@@ -3,129 +3,129 @@
 
 START_TEST(test_single_punctuation_tokens) {
     const char* input = "{[]}:,";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 0))->type, LEFT_BRACE_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 1))->type, LEFT_BRACKET_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 2))->type, RIGHT_BRACKET_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 3))->type, RIGHT_BRACE_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 4))->type, COLON_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 5))->type, COMMA_TOKEN);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 0))->type, JSON_TOKEN_LEFT_BRACE);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 1))->type, JSON_TOKEN_LEFT_BRACKET);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 2))->type, JSON_TOKEN_RIGHT_BRACKET);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 3))->type, JSON_TOKEN_RIGHT_BRACE);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 4))->type, JSON_TOKEN_COLON);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 5))->type, JSON_TOKEN_COMMA);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_single_string_tokens) {
     const char* input = "\"hello\" 'world'";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
-    json_token* t1 = (json_token*)arraylist_get(tokens, 0);
-    ck_assert_int_eq(t1->type, STRING_TOKEN);
+    JsonToken* t1 = (JsonToken*)arraylist_get(tokens, 0);
+    ck_assert_int_eq(t1->type, JSON_TOKEN_STRING);
     ck_assert_str_eq(t1->value.string, "hello");
 
-    json_token* t2 = (json_token*)arraylist_get(tokens, 1);
-    ck_assert_int_eq(t2->type, STRING_TOKEN);
+    JsonToken* t2 = (JsonToken*)arraylist_get(tokens, 1);
+    ck_assert_int_eq(t2->type, JSON_TOKEN_STRING);
     ck_assert_str_eq(t2->value.string, "world");
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_integer_number_tokens) {
     const char* input = "0 123 4567 42";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
-    json_token* t0 = (json_token*)arraylist_get(tokens, 0);
-    ck_assert_int_eq(t0->type, NUMBER_TOKEN);
+    JsonToken* t0 = (JsonToken*)arraylist_get(tokens, 0);
+    ck_assert_int_eq(t0->type, JSON_TOKEN_NUMBER);
     ck_assert_int_eq((int)t0->value.number, 0);
 
-    json_token* t1 = (json_token*)arraylist_get(tokens, 1);
-    ck_assert_int_eq(t1->type, NUMBER_TOKEN);
+    JsonToken* t1 = (JsonToken*)arraylist_get(tokens, 1);
+    ck_assert_int_eq(t1->type, JSON_TOKEN_NUMBER);
     ck_assert_int_eq((int)t1->value.number, 123);
 
-    json_token* t2 = (json_token*)arraylist_get(tokens, 2);
-    ck_assert_int_eq(t2->type, NUMBER_TOKEN);
+    JsonToken* t2 = (JsonToken*)arraylist_get(tokens, 2);
+    ck_assert_int_eq(t2->type, JSON_TOKEN_NUMBER);
     ck_assert_int_eq((int)t2->value.number, 4567);
 
-    json_token* t3 = (json_token*)arraylist_get(tokens, 3);
-    ck_assert_int_eq(t3->type, NUMBER_TOKEN);
+    JsonToken* t3 = (JsonToken*)arraylist_get(tokens, 3);
+    ck_assert_int_eq(t3->type, JSON_TOKEN_NUMBER);
     ck_assert_int_eq((int)t3->value.number, 42);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_mixed_tokens) {
     const char* input = "{ \"key\" : 'value' , [ ] }";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
-    json_token* t0 = (json_token*)arraylist_get(tokens, 0);
-    ck_assert_int_eq(t0->type, LEFT_BRACE_TOKEN);
+    JsonToken* t0 = (JsonToken*)arraylist_get(tokens, 0);
+    ck_assert_int_eq(t0->type, JSON_TOKEN_LEFT_BRACE);
 
-    json_token* t1 = (json_token*)arraylist_get(tokens, 1);
-    ck_assert_int_eq(t1->type, STRING_TOKEN);
+    JsonToken* t1 = (JsonToken*)arraylist_get(tokens, 1);
+    ck_assert_int_eq(t1->type, JSON_TOKEN_STRING);
     ck_assert_str_eq(t1->value.string, "key");
 
-    json_token* t2 = (json_token*)arraylist_get(tokens, 2);
-    ck_assert_int_eq(t2->type, COLON_TOKEN);
+    JsonToken* t2 = (JsonToken*)arraylist_get(tokens, 2);
+    ck_assert_int_eq(t2->type, JSON_TOKEN_COLON);
 
-    json_token* t3 = (json_token*)arraylist_get(tokens, 3);
-    ck_assert_int_eq(t3->type, STRING_TOKEN);
+    JsonToken* t3 = (JsonToken*)arraylist_get(tokens, 3);
+    ck_assert_int_eq(t3->type, JSON_TOKEN_STRING);
     ck_assert_str_eq(t3->value.string, "value");
 
-    json_token* t4 = (json_token*)arraylist_get(tokens, 4);
-    ck_assert_int_eq(t4->type, COMMA_TOKEN);
+    JsonToken* t4 = (JsonToken*)arraylist_get(tokens, 4);
+    ck_assert_int_eq(t4->type, JSON_TOKEN_COMMA);
 
-    json_token* t5 = (json_token*)arraylist_get(tokens, 5);
-    ck_assert_int_eq(t5->type, LEFT_BRACKET_TOKEN);
+    JsonToken* t5 = (JsonToken*)arraylist_get(tokens, 5);
+    ck_assert_int_eq(t5->type, JSON_TOKEN_LEFT_BRACKET);
 
-    json_token* t6 = (json_token*)arraylist_get(tokens, 6);
-    ck_assert_int_eq(t6->type, RIGHT_BRACKET_TOKEN);
+    JsonToken* t6 = (JsonToken*)arraylist_get(tokens, 6);
+    ck_assert_int_eq(t6->type, JSON_TOKEN_RIGHT_BRACKET);
 
-    json_token* t7 = (json_token*)arraylist_get(tokens, 7);
-    ck_assert_int_eq(t7->type, RIGHT_BRACE_TOKEN);
+    JsonToken* t7 = (JsonToken*)arraylist_get(tokens, 7);
+    ck_assert_int_eq(t7->type, JSON_TOKEN_RIGHT_BRACE);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
 START_TEST(test_array_with_numbers_and_strings) {
     const char* input = "[1, 2, 3, 'video games']";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
     ck_assert_int_eq(tokens->len, 9); 
 
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 0))->type, LEFT_BRACKET_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 1))->type, NUMBER_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 2))->type, COMMA_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 3))->type, NUMBER_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 4))->type, COMMA_TOKEN); 
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 5))->type, NUMBER_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 6))->type, COMMA_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 7))->type, STRING_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 8))->type, RIGHT_BRACKET_TOKEN);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 0))->type, JSON_TOKEN_LEFT_BRACKET);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 1))->type, JSON_TOKEN_NUMBER);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 2))->type, JSON_TOKEN_COMMA);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 3))->type, JSON_TOKEN_NUMBER);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 4))->type, JSON_TOKEN_COMMA); 
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 5))->type, JSON_TOKEN_NUMBER);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 6))->type, JSON_TOKEN_COMMA);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 7))->type, JSON_TOKEN_STRING);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 8))->type, JSON_TOKEN_RIGHT_BRACKET);
 
-    json_free();
+    json_arena_free();
 }
 
 START_TEST(test_object_with_numbers_and_commas) {
     const char* input = "{\"a\":1,\"b\":2}";
-    ArrayList* tokens = json_tokenize(input);
+    ArrayList* tokens = json_lex_string(input);
 
     ck_assert_int_eq(tokens->len, 9); 
 
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 0))->type, LEFT_BRACE_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 1))->type, STRING_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 2))->type, COLON_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 3))->type, NUMBER_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 4))->type, COMMA_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 5))->type, STRING_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 6))->type, COLON_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 7))->type, NUMBER_TOKEN);
-    ck_assert_int_eq(((json_token*)arraylist_get(tokens, 8))->type, RIGHT_BRACE_TOKEN);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 0))->type, JSON_TOKEN_LEFT_BRACE);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 1))->type, JSON_TOKEN_STRING);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 2))->type, JSON_TOKEN_COLON);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 3))->type, JSON_TOKEN_NUMBER);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 4))->type, JSON_TOKEN_COMMA);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 5))->type, JSON_TOKEN_STRING);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 6))->type, JSON_TOKEN_COLON);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 7))->type, JSON_TOKEN_NUMBER);
+    ck_assert_int_eq(((JsonToken*)arraylist_get(tokens, 8))->type, JSON_TOKEN_RIGHT_BRACE);
 
-    json_free();
+    json_arena_free();
 }
 END_TEST
 
