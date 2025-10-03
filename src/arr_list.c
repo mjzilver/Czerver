@@ -97,9 +97,9 @@ void arraylist_remove(ArrayList* list, void* value_to_remove, CompareFunc cmp) {
     }
 }
 
-void* arraylist_get(ArrayList* list, size_t index) {
-    if (index >= list->len) return NULL;
-    return list->items[index].value;
+void* arraylist_get(ArrayList* list, size_t i) {
+    if (i >= list->len) return NULL;
+    return list->items[i].value;
 }
 
 void arraylist_iterate(ArrayList* list, ArrayListCallback cb, void* user_context) {

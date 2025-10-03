@@ -76,29 +76,29 @@ void dict_set(Dict* d, const char* key, void* value) {
     dict_remove(d, key);
 
     int hashed_key = hash(key);
-    int idx = get_index(hashed_key, d->capacity);
+    int i = get_index(hashed_key, d->capacity);
     if (d->arena) {
-        bucket_arena_set(&d->buckets[idx], d->arena, key, value);
+        bucket_arena_set(&d->buckets[i], d->arena, key, value);
     } else {
-        bucket_set(&d->buckets[idx], key, value);
+        bucket_set(&d->buckets[i], key, value);
     }
 }
 
 void* dict_get(Dict* d, const char* key) {
     int hashed_key = hash(key);
-    int idx = get_index(hashed_key, d->capacity);
+    int i = get_index(hashed_key, d->capacity);
 
-    return bucket_get(&d->buckets[idx], key);
+    return bucket_get(&d->buckets[i], key);
 }
 
 void dict_remove(Dict* d, const char* key) {
     int hashed_key = hash(key);
-    int idx = get_index(hashed_key, d->capacity);
+    int i = get_index(hashed_key, d->capacity);
 
     if (d->arena) {
-        bucket_arena_remove(&d->buckets[idx], key);
+        bucket_arena_remove(&d->buckets[i], key);
     } else {
-        bucket_remove(&d->buckets[idx], key);
+        bucket_remove(&d->buckets[i], key);
     }
 }
 

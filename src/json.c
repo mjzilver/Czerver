@@ -399,8 +399,8 @@ void json_dict_iterate(const char* key, void* value, void* user_context) {
     ctx->first = false;
 }
 
-void json_arraylist_iterate(ArrayItem* item, size_t index, void* user_context) {
-    (void)index;
+void json_arraylist_iterate(ArrayItem* item, size_t i, void* user_context) {
+    (void)i;
     EncodeContext* ctx = (EncodeContext*)user_context;
     JsonValueNode* elem = (JsonValueNode*)item->value;
 
