@@ -1,6 +1,6 @@
 # Czerver
 
-**Czerver** is a simple HTTP server written in C.
+**Czerver** is a HTTP server & framework written in C.
 
 Tested on **macOS** and **Linux** (UNIX only).
 
