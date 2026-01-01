@@ -18,7 +18,7 @@ TEST_OBJ_FILES := $(patsubst $(TEST_DIR)/%.c,$(OBJ_DIR)/%.test.o,$(TEST_FILES))
 CC := gcc
 CFLAGS := -Wall -g -std=c11 -I$(SRC_DIR)
 PKG_CONFIG := pkg-config
-LUA_PKG := lua
+LUA_PKG := lua5.3
 CHECK_PKG := check
 
 LUA_CFLAGS := $(shell $(PKG_CONFIG) --cflags $(LUA_PKG))
