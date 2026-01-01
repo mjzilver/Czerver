@@ -1,7 +1,7 @@
 #include "json_utils.h"
 
-#include "arena.h"
-#include "arr_list.h"
+#include "../datastructure/arena.h"
+#include "../datastructure/arr_list.h"
 #include "json.h"
 
 JsonValueNode* json_new_number(Arena* arena, double value) {

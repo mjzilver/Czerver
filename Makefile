@@ -69,9 +69,6 @@ $(OBJ_DIR)/%.test.o: $(TEST_DIR)/%.c
 valgrind: build
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $(BIN_DIR)/main
 
-leaks: build
-	./scripts/leaks.sh
-
 clean:
 	rm -rf $(BIN_DIR) $(OBJ_DIR)
 

@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dict.h"
-#include "file.h"
-#include "globals.h"
-#include "json.h"
+#include "../datastructure/dict.h"
+#include "../json/json.h"
+#include "../server/file.h"
+#include "../server/globals.h"
 
 typedef enum KeyType { TYPE_INT, TYPE_STRING } KeyType;
 

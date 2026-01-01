@@ -2,7 +2,7 @@
 
 #include <stddef.h>
 
-#include "dict.h"
+#include "../datastructure/dict.h"
 
 Dict* var_dict = NULL;
 Config* cfg = NULL;

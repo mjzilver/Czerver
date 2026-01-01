@@ -1,5 +1,8 @@
 #include "api_utils.h"
 
+#include "../datastructure/arena.h"
+#include "../json/json.h"
+
 Arena* get_request_arena() {
     static Arena* arena = NULL;
     if (!arena) {

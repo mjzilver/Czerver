@@ -6,11 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arena.h"
-#include "arr_list.h"
-#include "buff.h"
-#include "dict.h"
-#include "string_utils.h"
+#include "../datastructure/arena.h"
+#include "../datastructure/arr_list.h"
+#include "../datastructure/buff.h"
+#include "../datastructure/dict.h"
+#include "../utils/string_utils.h"
 
 Arena* get_json_arena() {
     static Arena* arena = NULL;

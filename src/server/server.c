@@ -8,12 +8,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "dict.h"
+#include "../datastructure/dict.h"
+#include "../utils/string_utils.h"
 #include "globals.h"
 #include "http_codes.h"
 #include "lua.h"
 #include "route.h"
-#include "string_utils.h"
 #include "template.h"
 
 extern Dict* var_dict;

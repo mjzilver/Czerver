@@ -1,5 +1,6 @@
+#include "../datastructure/dict.h"
 #include "config.h"
-#include "dict.h"
+
 #ifndef GLOBALS_H
 #define GLOBALS_H
 

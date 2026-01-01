@@ -5,12 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arr_list.h"
-#include "buff.h"
+#include "../datastructure/arr_list.h"
+#include "../datastructure/buff.h"
+#include "../utils/string_utils.h"
 #include "file.h"
 #include "globals.h"
-#include "string_utils.h"
-#include "utils.h"
 
 #define VAR_DELIM_START "{{"
 #define VAR_DELIM_END "}}"

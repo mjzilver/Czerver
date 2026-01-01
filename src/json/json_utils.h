@@ -1,8 +1,8 @@
 #ifndef JSON_UTILS_H
 #define JSON_UTILS_H
 
-#include "arr_list.h"
-#include "dict.h"
+#include "../datastructure/arr_list.h"
+#include "../datastructure/dict.h"
 #include "json.h"
 
 #define FIELD_COUNT(arr) (sizeof(arr) / sizeof((arr)[0]))

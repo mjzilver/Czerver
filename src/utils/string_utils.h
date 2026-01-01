@@ -1,8 +1,30 @@
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
 
+#include <ctype.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+
+static inline void trim_whitespace(char* str) {
+    if (str == NULL) return;
+
+    char* start = str;
+    while (isspace((unsigned char)*start)) {
+        start++;
+    }
+
+    if (start != str) {
+        memmove(str, start, strlen(start) + 1);
+    }
+
+    char* end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) {
+        end--;
+    }
+
+    *(end + 1) = '\0';
+}
 
 static inline size_t portable_strnlen(const char* s, size_t maxlen) {
     size_t i;

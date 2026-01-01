@@ -1,8 +1,7 @@
 #ifndef API_UTILS_H
 #define API_UTILS_H
 
-#include "../arena.h"
-#include "../json.h"
+#include "../datastructure/arena.h"
 
 static const size_t API_ARENA_SIZE = 516 * 1024;
 

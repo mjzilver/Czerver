@@ -3,8 +3,8 @@
 
 #include <stddef.h>
 
-#include "arr_list.h"
-#include "dict.h"
+#include "../datastructure/arr_list.h"
+#include "../datastructure/dict.h"
 
 typedef enum {
     JSON_STRING,   // "String"

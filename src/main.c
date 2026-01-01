@@ -4,12 +4,12 @@
 
 #include "api/math.h"
 #include "api/weather.h"
-#include "arr_list.h"
-#include "config.h"
-#include "globals.h"
-#include "route.h"
-#include "server.h"
-#include "string_utils.h"
+#include "datastructure/arr_list.h"
+#include "server/config.h"
+#include "server/globals.h"
+#include "server/route.h"
+#include "server/server.h"
+#include "utils/string_utils.h"
 
 int main(int argc, char const* argv[]) {
     parse_json_config("./config.json");

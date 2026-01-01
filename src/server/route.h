@@ -1,8 +1,7 @@
 #ifndef ROUTE_H
 #define ROUTE_H
 
-#include "dict.h"
-#include "template.h"
+#include "../datastructure/dict.h"
 
 #define HTML "text/html"
 #define CSS "text/css"

@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "../json.h"
-#include "../json_utils.h"
+#include "../json/json.h"
+#include "../json/json_utils.h"
 #include "api_utils.h"
 
 typedef struct MathResult {

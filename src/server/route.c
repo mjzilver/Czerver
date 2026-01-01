@@ -8,10 +8,10 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 
-#include "dict.h"
+#include "../datastructure/dict.h"
+#include "../utils/string_utils.h"
 #include "file.h"
 #include "globals.h"
-#include "string_utils.h"
 
 Dict* routes_dict = NULL;
 

@@ -5,11 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arr_list.h"
-#include "arr_list_utils.h"
-#include "dict.h"
+#include "../datastructure/arr_list.h"
+#include "../datastructure/arr_list_utils.h"
+#include "../datastructure/dict.h"
+#include "../utils/string_utils.h"
 #include "globals.h"
-#include "string_utils.h"
 
 extern Dict* var_dict;
 
